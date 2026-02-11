@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -90,6 +90,17 @@ langToggle.onclick = () => {
       setTimeout(() => star.remove(), 2000);
     });
 
+    // Full-screen falling sparkles (adapted from your original)
+    setInterval(() => {
+      const star = document.createElement("div");
+      star.className = "falling-star";
+      star.textContent = "✦";
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.setProperty("--drift", Math.random());
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 6000);
+    }, 700);
+
     // Tab title animation
     const titles = ["VELUTINX", "ELUTINX", "LUTINX", "UTINX", "TINX", "INX", "NX", "X"];
     let index = 0;
@@ -114,19 +125,7 @@ langToggle.onclick = () => {
       img.loading = "lazy";
       gallery.appendChild(img);
     }
-// Sparkles falling inside the gallery area
-const gallery = document.getElementById("gallery");
-setInterval(() => {
-  const star = document.createElement("div");
-  star.className = "box-star";
-  star.textContent = "✦";
-  star.style.left = Math.random() * gallery.clientWidth + "px";
-  star.style.top = "0px";
-  gallery.appendChild(star);
-  setTimeout(() => star.remove(), 6000);
-}, 700);
 
-    
     // Zoom functionality
     let activeClone = null;
     let originRect = null;
