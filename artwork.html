@@ -9,10 +9,7 @@
 
   <!-- Fixed controls -->
   <div class="lang-swipe" id="langSwipe"></div>
-  
-  <!-- Language toggle: bigger flags + rectangle shape -->
   <div class="lang-toggle" id="langToggle">🇯🇵</div>
-  
   <div class="theme-toggle" id="themeToggle">
     <div class="theme-knob"></div>
   </div>
@@ -45,7 +42,7 @@
 
   <!-- All shared functionality inline -->
   <script>
-    // Language toggle with bigger flags
+    // Language toggle
     let isJapanese = false;
     langToggle.onclick = () => {
       langSwipe.classList.remove("active");
@@ -67,7 +64,6 @@
             : "Hello! These are just a few small samples of my artwork — I share a lot more on my free Discord! — Temporal Images";
         }
 
-        // Bigger flag version
         langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
       }, 180);
     };
@@ -93,16 +89,17 @@
       setTimeout(() => star.remove(), 2000);
     });
 
-    // Full-screen falling sparkles
+    // Full-page falling sparkles (starts from top, falls across full viewport)
     setInterval(() => {
       const star = document.createElement("div");
       star.className = "falling-star";
       star.textContent = "✦";
-      star.style.left = Math.random() * 100 + "vw";
-      star.style.setProperty("--drift", Math.random());
+      star.style.left = Math.random() * 100 + "vw";          // random horizontal position
+      star.style.top = "-10vh";                              // starts above the viewport
+      star.style.setProperty("--drift", Math.random() * 2 - 1); // slight left/right drift
       document.body.appendChild(star);
-      setTimeout(() => star.remove(), 6000);
-    }, 700);
+      setTimeout(() => star.remove(), 8000);                 // longer fall time for scrolling pages
+    }, 400);  // more frequent so they are visible while scrolling
 
     // Tab title animation
     const titles = ["VELUTINX", "ELUTINX", "LUTINX", "UTINX", "TINX", "INX", "NX", "X"];
