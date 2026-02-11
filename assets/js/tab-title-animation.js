@@ -58,7 +58,7 @@ document.title = "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀♡";  // thre
                 return;
               }
               current = current.slice(1); // remove first letter
-              document.title = current || "\u200B";
+              document.title = current || "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀♡";
             }, SHRINK_INTERVAL);
           }, PAGE_SHOW_DURATION);
         }
