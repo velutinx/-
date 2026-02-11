@@ -150,9 +150,13 @@
     document.getElementById("contactForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
+      // Define inputs
+      const name = document.getElementById("name");
+      const email = document.getElementById("email");
+      const message = document.getElementById("message");
+
       // Reset previous errors
-      const inputs = [name, email, message];
-      inputs.forEach(input => {
+      [name, email, message].forEach(input => {
         input.style.borderColor = ''; // reset
         input.style.animation = 'none'; // reset shake
       });
@@ -175,6 +179,7 @@
         hasError = true;
       }
 
+      // Show popup if ANY error
       if (hasError) {
         const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
         showPopup(errorText);
@@ -184,7 +189,7 @@
       const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
       showPopup(successText);
 
-      // Submit to Formspree (no mailto)
+      // Submit to Formspree
       this.submit();
     });
 
