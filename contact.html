@@ -38,7 +38,7 @@
           </div>
           <div class="form-group">
             <label id="labelEmail">EMAIL</label>
-            <input type="email" id="email" name="email" placeholder="Email">
+<input type="email" id="email" name="email" placeholder="Email"> <!-- no required -->
           </div>
           <div class="form-group">
             <label id="labelMessage">MESSAGE</label>
@@ -168,11 +168,12 @@
         name.style.animation = 'shake 0.35s';
         hasError = true;
       }
-      if (!email.value.trim() || !email.value.includes("@")) {
-        email.style.borderColor = '#b33';
-        email.style.animation = 'shake 0.35s';
-        hasError = true;
-      }
+if (!email.value.trim() || !email.value.includes("@")) {
+  // Remove or comment out this block if you want to allow invalid/empty email
+  // email.style.borderColor = '#b33';
+  // email.style.animation = 'shake 0.35s';
+  // hasError = true;
+}
       if (!message.value.trim()) {
         message.style.borderColor = '#b33';
         message.style.animation = 'shake 0.35s';
