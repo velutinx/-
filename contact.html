@@ -30,7 +30,6 @@
 
         <form id="contactForm" action="https://formspree.io/f/xqebavbr" method="POST">
           <input type="hidden" name="_subject" value="New Contact from Website">
-          <input type="hidden" name="_replyto" value="email">
 
           <div class="form-group">
             <label id="labelName">NAME</label>
@@ -168,11 +167,14 @@
         name.style.animation = 'shake 0.35s';
         hasError = true;
       }
-      if (!email.value.trim()) {
+
+      // Email: require filled + basic format (contains @ and . after)
+      if (!email.value.trim() || !email.value.includes("@") || !email.value.includes(".", email.value.indexOf("@"))) {
         email.style.borderColor = '#b33';
         email.style.animation = 'shake 0.35s';
         hasError = true;
       }
+
       if (!message.value.trim()) {
         message.style.borderColor = '#b33';
         message.style.animation = 'shake 0.35s';
@@ -185,9 +187,8 @@
         return;
       }
 
-      const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
-
       // Show optimistic success
+      const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
       showPopup(successText);
 
       // Prepare form data
