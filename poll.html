@@ -396,23 +396,41 @@
     rotate();
     showSelected(1);
 
-    // Vote function — allows changing vote (upsert)
-    async function vote(optionId) {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json",
-            Prefer: "resolution=merge-duplicates"  // Key line: allows updating existing vote
-          },
-          body: JSON.stringify({
-            poll_id: POLL_ID,
-            option_id: optionId,
-            voter_hash: voterHash
-          })
-        });
+// Vote function — allows changing vote (upsert)
+async function vote(optionId) {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates"  // allows updating existing vote
+      },
+      body: JSON.stringify({
+        poll_id: POLL_ID,
+        option_id: optionId,
+        voter_hash: voterHash
+      })
+    });
+
+    // Accept both 201 (new vote) and 409 (updated vote) as success
+    if (response.status === 201 || response.status === 409) {
+      console.log("Vote successful / updated");
+      fetchResults();
+      fetchLeaderboard();
+      // Optional: visual feedback that vote changed
+      showPopup("Vote updated!");
+    } else {
+      const errorData = await response.json();
+      console.error("Vote failed:", errorData);
+      showPopup("Failed to vote. Please try again.");
+    }
+  } catch (err) {
+    console.error("Vote error:", err);
+    showPopup("Vote failed. Check connection.");
+  }
+}
 
         if (!response.ok) {
           const errorData = await response.json();
