@@ -94,15 +94,21 @@
       setTimeout(() => star.remove(), 6000);
     }, 700);
 
-    // Tab title animation (optional – keep or remove)
-    const titles = ["VELUTINX", "ELUTINX", "LUTINX", "UTINX", "TINX", "INX", "NX", "X"];
-    let index = 0;
-    function animateTitle() {
-      document.title = titles[index];
-      index = (index + 1) % titles.length;
-      setTimeout(animateTitle, 600);
+
+    // Gallery loading
+    const MAX_IMAGES = 45;
+    const BASE = "/images/artwork/";
+
+    const gallery = document.getElementById("gallery");
+
+    for (let i = 1; i <= MAX_IMAGES; i++) {
+      const img = document.createElement("img");
+      img.src = BASE + i + ".jpg";
+      img.alt = `Artwork sample ${i}`;
+      img.onerror = () => img.remove();
+      img.loading = "lazy";
+      gallery.appendChild(img);
     }
-    animateTitle();
   </script>
 
 </body>
