@@ -143,38 +143,43 @@
       setTimeout(() => star.remove(), 6000);
     }, 700);
 
-    // Contact form submission + validation (red border + shake + popup)
-    document.getElementById("contactForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+// Contact form submission + validation
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-      // Reset previous errors
-      [name, email, message].forEach(f => f.classList.remove("input-error"));
+  // Define the input elements (this was missing!)
+  const name = document.getElementById("name");
+  const email = document.getElementById("email");
+  const message = document.getElementById("message");
 
-      let hasError = false;
+  // Reset previous errors
+  [name, email, message].forEach(f => f.classList.remove("input-error"));
 
-      if (!name.value.trim()) { name.classList.add("input-error"); hasError = true; }
-      if (!email.value.includes("@")) { email.classList.add("input-error"); hasError = true; }
-      if (!message.value.trim()) { message.classList.add("input-error"); hasError = true; }
+  let hasError = false;
 
-      if (hasError) {
-        const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
-        showPopup(errorText);
-        return;
-      }
+  if (!name.value.trim()) { name.classList.add("input-error"); hasError = true; }
+  if (!email.value.includes("@")) { email.classList.add("input-error"); hasError = true; }
+  if (!message.value.trim()) { message.classList.add("input-error"); hasError = true; }
 
-      const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
-      showPopup(successText);
+  if (hasError) {
+    const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
+    showPopup(errorText);
+    return;
+  }
 
-      const subject = encodeURIComponent("Website Contact — " + name.value);
-      const body = encodeURIComponent(
-        "Name: " + name.value + "\n" +
-        "Email: " + email.value + "\n\n" +
-        message.value
-      );
+  const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
+  showPopup(successText);
 
-      window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
-      this.reset();
-    });
+  const subject = encodeURIComponent("Website Contact — " + name.value);
+  const body = encodeURIComponent(
+    "Name: " + name.value + "\n" +
+    "Email: " + email.value + "\n\n" +
+    message.value
+  );
+
+  window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
+  this.reset();
+});
 
     // Popup function (fades in + out after 5s)
     function showPopup(text) {
