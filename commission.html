@@ -43,31 +43,48 @@
 
   </div>
 
-  <!-- Shared navigation -->
+  <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
 
-  <!-- Inline shared features (exactly as you had) -->
+  <!-- All shared functionality inline with localStorage persistence -->
   <script>
-    // Language toggle + translation for blobs & commission text
-    let isJapanese = false;
-    const langToggleBtn = document.getElementById("langToggle");
-    const langSwipe = document.getElementById("langSwipe");
+    // Load saved preferences on page load
+    const savedLang = localStorage.getItem("language");
+    const savedDark = localStorage.getItem("darkMode") === "true";
 
-    langToggleBtn.onclick = () => {
+    let isJapanese = savedLang === "jp";
+
+    // Apply saved language on load
+    if (isJapanese) {
+      document.querySelectorAll(".blob-text").forEach(t => {
+        t.textContent = t.dataset.jp;
+      });
+      document.getElementById("comTitle").textContent = "コミッション";
+      document.getElementById("comInfo").textContent = "コミッション情報は近日中に追加されます。";
+      document.getElementById("comList").innerHTML = `✦ 料金<br>✦ サンプル<br>✦ 利用規約<br>✦ 受付状況<br><br>（プレースホルダー — 近日公開 ♡）`;
+      document.getElementById("langToggle").textContent = "🇺🇸";
+    } else {
+      document.getElementById("langToggle").textContent = "🇯🇵";
+    }
+
+    // Apply saved dark mode on load
+    if (savedDark) {
+      document.body.classList.add("dark");
+    }
+
+    // Language toggle with flags + save preference
+    langToggle.onclick = () => {
       langSwipe.classList.remove("active");
       void langSwipe.offsetWidth;
       langSwipe.classList.add("active");
 
       setTimeout(() => {
         isJapanese = !isJapanese;
-        langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
-        
-        // Translate blobs
+
         document.querySelectorAll(".blob-text").forEach(t => {
           t.textContent = isJapanese ? t.dataset.jp : t.dataset.en;
         });
 
-        // Translate commission text
         document.getElementById("comTitle").textContent = isJapanese ? "コミッション" : "COMMISSIONS";
         document.getElementById("comInfo").textContent = isJapanese 
           ? "コミッション情報は近日中に追加されます。" 
@@ -75,12 +92,18 @@
         document.getElementById("comList").innerHTML = isJapanese 
           ? `✦ 料金<br>✦ サンプル<br>✦ 利用規約<br>✦ 受付状況<br><br>（プレースホルダー — 近日公開 ♡）`
           : `✦ Prices<br>✦ Examples<br>✦ Terms of Service<br>✦ Queue Status<br><br>(Placeholder content — coming soon ♡)`;
+
+        langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
+
+        // Save language preference
+        localStorage.setItem("language", isJapanese ? "jp" : "en");
       }, 180);
     };
 
-    // Theme toggle
-    document.getElementById("themeToggle").onclick = () => {
+    // Theme toggle + save preference
+    themeToggle.onclick = () => {
       document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
     };
 
     // Cursor sparkles
@@ -114,7 +137,7 @@
     }, 700);
   </script>
 
-  <!-- Shared tab title animation (same as artwork.html) -->
+  <!-- Shared tab title animation -->
   <script src="/assets/js/tab-title-animation.js"></script>
 
 </body>
