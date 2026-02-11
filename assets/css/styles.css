@@ -380,3 +380,19 @@ body.dark .commission-box {
   10% { opacity: 1; }
   to { opacity: 0; transform: translateY(calc(100vh + 100px)) translateX(calc(-120px + 240px * var(--drift))); }
 }
+
+/* Make language toggle rectangular + bigger flags */
+.lang-toggle {
+  width: 72px !important;          /* wider than tall → rectangle */
+  height: 48px !important;         /* adjust height as needed */
+  font-size: 32px !important;      /* ~3x normal emoji size */
+  line-height: 48px !important;    /* center vertically */
+  padding: 0 !important;
+  border-radius: 8px !important;   /* slightly softer corners */
+}
+
+/* Optional: make it even more flag-like */
+.lang-toggle:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
