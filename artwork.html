@@ -44,9 +44,9 @@
   <script src="/assets/js/cursor-sparkles.js"></script>
   <script src="/assets/js/tab-title-animation.js"></script>
 
-  <!-- Page-specific: gallery + zoom + full-screen sparkles -->
+  <!-- Page-specific logic -->
   <script>
-    // Gallery loading (from GitHub)
+    // Gallery loading
     const MAX_IMAGES = 45;
     const BASE = "/images/artwork/";
 
@@ -61,7 +61,7 @@
       gallery.appendChild(img);
     }
 
-    // Zoom functionality
+    // Zoom functionality (click to zoom image)
     let activeClone = null;
     let originRect = null;
 
@@ -139,7 +139,7 @@
       setTimeout(() => star.remove(), 6000);
     }, 700);
 
-    // Page-specific intro translation
+    // Artwork intro translation
     const EN_INTRO = "Hello! These are just a few small samples of my artwork — I share a lot more on my free Discord! — Temporal Images";
     const JP_INTRO = "こちらは作品サンプルの一部です。無料Discordではさらに多く公開しています！ 一時的な画像";
 
