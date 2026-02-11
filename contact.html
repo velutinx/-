@@ -147,36 +147,41 @@
     document.getElementById("contactForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      // Define inputs (this was missing in previous versions)
+      // Define inputs
       const name = document.getElementById("name");
       const email = document.getElementById("email");
       const message = document.getElementById("message");
 
       // Reset previous errors
       [name, email, message].forEach(input => {
-        input.style.borderColor = ''; // reset
+        input.style.borderColor = ''; // reset to default
         input.style.animation = 'none'; // reset shake
       });
 
       let hasError = false;
 
+      // Name: must not be empty
       if (!name.value.trim()) {
         name.style.borderColor = '#b33'; // red
         name.style.animation = 'shake 0.35s';
         hasError = true;
       }
+
+      // Email: must not be empty AND must contain @
       if (!email.value.trim() || !email.value.includes("@")) {
         email.style.borderColor = '#b33';
         email.style.animation = 'shake 0.35s';
         hasError = true;
       }
+
+      // Message: must not be empty
       if (!message.value.trim()) {
         message.style.borderColor = '#b33';
         message.style.animation = 'shake 0.35s';
         hasError = true;
       }
 
-      // Show popup if ANY error (empty or invalid email)
+      // Show popup if ANY error
       if (hasError) {
         const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
         showPopup(errorText);
