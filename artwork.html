@@ -125,7 +125,19 @@ langToggle.onclick = () => {
       img.loading = "lazy";
       gallery.appendChild(img);
     }
+// Sparkles falling inside the gallery area
+const gallery = document.getElementById("gallery");
+setInterval(() => {
+  const star = document.createElement("div");
+  star.className = "box-star";
+  star.textContent = "✦";
+  star.style.left = Math.random() * gallery.clientWidth + "px";
+  star.style.top = "0px";
+  gallery.appendChild(star);
+  setTimeout(() => star.remove(), 6000);
+}, 700);
 
+    
     // Zoom functionality
     let activeClone = null;
     let originRect = null;
