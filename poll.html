@@ -355,6 +355,7 @@
         hash = result.visitorId;
         localStorage.setItem("voter_hash_poll", hash);
       }
+      console.log("Current voter hash (should be the same in all browsers on this computer):", hash);
       return hash;
     }
 
@@ -404,7 +405,7 @@
     rotate();
     showSelected(1);
 
-    // Vote function — upsert with on_conflict (reliable, like your old working code)
+    // Vote function — upsert with on_conflict
     async function vote(optionId) {
       try {
         const voterHash = await getVoterHash();
@@ -439,7 +440,7 @@
       }
     }
 
-    // Progress bars – direct from votes table (reliable)
+    // Progress bars – direct from votes table
     async function fetchResults() {
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/votes?poll_id=eq.${POLL_ID}&select=option_id`, {
