@@ -37,15 +37,76 @@
   <!-- Zoom overlay -->
   <div class="zoom-overlay" id="zoomOverlay"></div>
 
-  <!-- Shared scripts -->
+  <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
-  <script src="/assets/js/language-toggle.js"></script>
-  <script src="/assets/js/theme-toggle.js"></script>
-  <script src="/assets/js/cursor-sparkles.js"></script>
-  <script src="/assets/js/tab-title-animation.js"></script>
 
-  <!-- Page-specific logic -->
+  <!-- All shared functionality inline (same as index.html) -->
   <script>
+    // Language toggle
+    let isJapanese = false;
+    langToggle.onclick = () => {
+      langSwipe.classList.remove("active");
+      void langSwipe.offsetWidth;
+      langSwipe.classList.add("active");
+
+      setTimeout(() => {
+        isJapanese = !isJapanese;
+
+        document.querySelectorAll(".blob-text").forEach(t => {
+          t.textContent = isJapanese ? t.dataset.jp : t.dataset.en;
+        });
+
+        // Translate artwork intro
+        document.getElementById("artworkIntro").textContent = isJapanese
+          ? "こちらは作品サンプルの一部です。無料Discordではさらに多く公開しています！ 一時的な画像"
+          : "Hello! These are just a few small samples of my artwork — I share a lot more on my free Discord! — Temporal Images";
+
+        langToggle.textContent = isJapanese ? "EN" : "日本語";
+      }, 180);
+    };
+
+    // Theme toggle
+    themeToggle.onclick = () => document.body.classList.toggle("dark");
+
+    // Cursor sparkles
+    let lastStarTime = 0;
+    document.addEventListener("mousemove", (e) => {
+      const now = Date.now();
+      if (now - lastStarTime < 45) return;
+      lastStarTime = now;
+
+      const star = document.createElement("div");
+      star.className = "star";
+      star.textContent = "✦";
+      star.style.setProperty("--drift", Math.random());
+      star.style.left = e.clientX + "px";
+      star.style.top = e.clientY + "px";
+
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 2000);
+    });
+
+    // Full-screen falling sparkles (adapted from your original)
+    setInterval(() => {
+      const star = document.createElement("div");
+      star.className = "falling-star";
+      star.textContent = "✦";
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.setProperty("--drift", Math.random());
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 6000);
+    }, 700);
+
+    // Tab title animation
+    const titles = ["VELUTINX", "ELUTINX", "LUTINX", "UTINX", "TINX", "INX", "NX", "X"];
+    let index = 0;
+    function animateTitle() {
+      document.title = titles[index];
+      index = (index + 1) % titles.length;
+      setTimeout(animateTitle, 600);
+    }
+    animateTitle();
+
     // Gallery loading
     const MAX_IMAGES = 45;
     const BASE = "/images/artwork/";
@@ -61,7 +122,7 @@
       gallery.appendChild(img);
     }
 
-    // Zoom functionality (click to zoom image)
+    // Zoom functionality
     let activeClone = null;
     let originRect = null;
 
@@ -83,7 +144,7 @@
       document.body.appendChild(clone);
       activeClone = clone;
 
-      clone.getBoundingClientRect(); // reflow
+      clone.getBoundingClientRect();
       document.getElementById("zoomOverlay").classList.add("active");
       document.body.classList.add("zoom-active");
 
@@ -127,26 +188,6 @@
         originRect = null;
       }, 230);
     };
-
-    // Full-screen falling sparkles
-    setInterval(() => {
-      const star = document.createElement("div");
-      star.className = "falling-star";
-      star.textContent = "✦";
-      star.style.left = Math.random() * 100 + "vw";
-      star.style.setProperty("--drift", Math.random());
-      document.body.appendChild(star);
-      setTimeout(() => star.remove(), 6000);
-    }, 700);
-
-    // Artwork intro translation
-    const EN_INTRO = "Hello! These are just a few small samples of my artwork — I share a lot more on my free Discord! — Temporal Images";
-    const JP_INTRO = "こちらは作品サンプルの一部です。無料Discordではさらに多く公開しています！ 一時的な画像";
-
-    document.addEventListener("languagechange", (e) => {
-      const isJapanese = e.detail.isJapanese;
-      document.getElementById("artworkIntro").textContent = isJapanese ? JP_INTRO : EN_INTRO;
-    });
   </script>
 
 </body>
