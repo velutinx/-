@@ -1,26 +1,16 @@
-/* =========================================================
-   ===== Cursor Sparkles
-   ========================================================= */
-(function () {
-  let lastStarTime = 0;
+let lastStarTime = 0;
+document.addEventListener("mousemove", (e) => {
+  const now = Date.now();
+  if (now - lastStarTime < 45) return;
+  lastStarTime = now;
 
-  document.addEventListener("mousemove", (e) => {
-    const now = Date.now();
-    if (now - lastStarTime < 45) return;
-    lastStarTime = now;
+  const star = document.createElement("div");
+  star.className = "star";
+  star.textContent = "✦";
+  star.style.setProperty("--drift", Math.random());
+  star.style.left = e.clientX + "px";
+  star.style.top = e.clientY + "px";
 
-    const star = document.createElement("div");
-    star.className = "star";
-    star.textContent = "✦";
-    star.style.setProperty("--drift", Math.random());
-
-    const x = e.clientX;
-    const y = e.clientY;
-
-    star.style.left = x + "px";
-    star.style.top = y + "px";
-
-    document.body.appendChild(star);
-    setTimeout(() => star.remove(), 2000);
-  });
-})();
+  document.body.appendChild(star);
+  setTimeout(() => star.remove(), 2000);
+});
