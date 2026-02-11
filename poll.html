@@ -251,6 +251,9 @@
   <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
 
+  <!-- FingerprintJS for device-unique ID (open-source) -->
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+
   <!-- Poll logic -->
   <script>
     // ---------- Persistence & language/theme ----------
@@ -337,16 +340,22 @@
 
     const leftImg = document.getElementById("leftImg");
     const leftBig = document.getElementById("leftBig");
+
     const rightImg = document.getElementById("rightImg");
     const rightBig = document.getElementById("rightBig");
 
     let rotateIndex = 1;
 
-    // Voter hash — stored in localStorage (prevents multiple votes from same browser)
-    let voterHash = localStorage.getItem("voter_hash_poll");
-    if (!voterHash) {
-      voterHash = crypto.randomUUID();
-      localStorage.setItem("voter_hash_poll", voterHash);
+    // Get or generate voter_hash (device-unique via fingerprint)
+    async function getVoterHash() {
+      let voterHash = localStorage.getItem("voter_hash_poll");
+      if (!voterHash) {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        voterHash = result.visitorId;
+        localStorage.setItem("voter_hash_poll", voterHash);
+      }
+      return voterHash;
     }
 
     // Build small cards
@@ -398,13 +407,14 @@
     // Vote function — allows changing vote (upsert)
     async function vote(optionId) {
       try {
+        const voterHash = await getVoterHash();
         const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
           method: "POST",
           headers: {
             apikey: SUPABASE_KEY,
             Authorization: `Bearer ${SUPABASE_KEY}`,
             "Content-Type": "application/json",
-            Prefer: "resolution=merge-duplicates,return=minimal"
+            Prefer: "resolution=merge-duplicates"  // Critical for changing votes
           },
           body: JSON.stringify({
             poll_id: POLL_ID,
@@ -413,102 +423,95 @@
           })
         });
 
+        // Accept 201 (new) and 409 (updated) as success
         if (response.status === 201 || response.status === 409) {
           console.log("Vote successful / updated");
+          // Small delay to let Supabase propagate
           setTimeout(() => {
             fetchResults();
             fetchLeaderboard();
-          }, 600); // slightly longer delay for consistency
+          }, 500);
         } else {
-          const errorData = await response.json().catch(() => ({}));
-          console.error("Vote failed:", response.status, errorData);
+          const errorData = await response.json();
+          console.error("Vote failed:", errorData);
           alert("Failed to vote. Please try again.");
         }
       } catch (err) {
         console.error("Vote error:", err);
-        alert("Vote failed. Check your connection.");
+        alert("Vote failed. Check connection.");
       }
     }
 
-    // Fetch progress bars + labels from poll_result view
+    // Common headers for no-cache
+    const noCacheHeaders = {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
+
+    // Fetch results for progress bars
     async function fetchResults() {
       try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/poll_result?order=score.desc&cache_bust=${Date.now()}`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`
-            }
-          }
-        );
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/poll_result?order=score.desc`, {
+          headers: noCacheHeaders
+        });
 
         if (!res.ok) {
-          console.error("poll_result fetch failed:", res.status, await res.text());
+          console.error("Fetch results failed:", res.status, await res.text());
           return;
         }
 
         const data = await res.json();
         if (!Array.isArray(data)) {
-          console.error("poll_result response is not array:", data);
+          console.error("Results is not an array:", data);
           return;
         }
 
-        const totalVotes = data.reduce((sum, r) => sum + Number(r.vote_count || 0), 0) || 1;
+        const totalVotes = data.reduce((sum, r) => sum + (r.vote_count || 0), 0) || 1;
 
         document.querySelectorAll(".card").forEach(card => {
           const id = Number(card.dataset.id);
-          const row = data.find(r => Number(r.option_id) === id);
+          const row = data.find(r => r.option_id === id);
+          const percent = row ? Math.round((row.vote_count / totalVotes) * 100) : 0;
 
-          const count = row ? Number(row.vote_count || 0) : 0;
-          const percent = Math.round((count / totalVotes) * 100);
+          card.querySelector(".progress-fill").style.width = percent + "%";
+          card.querySelector(".progress-text").textContent = percent + "%";
 
-          card.querySelector(".progress-fill").style.width = `${percent}%`;
-          card.querySelector(".progress-text").textContent = `${percent}%`;
-
-          if (row?.character_name) {
-            card.querySelector(".label").textContent = row.character_name;
-          }
+          if (row) card.querySelector(".label").textContent = row.character_name;
         });
       } catch (err) {
         console.error("Fetch results error:", err);
       }
     }
 
-    // Fetch leaderboard (same data source)
+    // Fetch leaderboard + card labels
     async function fetchLeaderboard() {
       try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/poll_result?order=score.desc&cache_bust=${Date.now()}`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`
-            }
-          }
-        );
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/poll_result?order=score.desc`, {
+          headers: noCacheHeaders
+        });
 
         if (!res.ok) {
-          console.error("Leaderboard fetch failed:", res.status, await res.text());
+          console.error("Fetch leaderboard failed:", res.status, await res.text());
           resultsBox.innerHTML = "Error loading leaderboard";
           return;
         }
 
         const rows = await res.json();
         if (!Array.isArray(rows)) {
-          console.error("poll_result is not array:", rows);
+          console.error("Leaderboard is not an array:", rows);
           resultsBox.innerHTML = "Error loading leaderboard";
           return;
         }
 
-        let html = "";
+        let leaderboardHTML = "";
         rows.forEach(r => {
-          const name = r.character_name || `Option ${r.option_id}`;
-          const score = Number(r.score || 0);
-          html += `<div class="leaderboard-entry">${name}: ${score.toFixed(1)}</div>`;
+          leaderboardHTML += `<div class="leaderboard-entry">${r.character_name}: ${ (r.score || 0).toFixed(1) }</div>`;
         });
 
-        resultsBox.innerHTML = html || "No votes yet";
+        resultsBox.innerHTML = leaderboardHTML || "No votes yet";
       } catch (err) {
         console.error("Fetch leaderboard error:", err);
         resultsBox.innerHTML = "Error loading leaderboard";
@@ -518,8 +521,6 @@
     // Initial load
     fetchResults();
     fetchLeaderboard();
-
-    // Refresh every 30 seconds
     setInterval(fetchResults, 30000);
     setInterval(fetchLeaderboard, 30000);
 
