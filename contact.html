@@ -76,7 +76,7 @@
   <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
 
-  <!-- All shared functionality inline (same as index.html) -->
+  <!-- All shared functionality inline (same as index.html & artwork.html) -->
   <script>
     // Language toggle with flags
     let isJapanese = false;
@@ -143,7 +143,7 @@
       setTimeout(() => star.remove(), 6000);
     }, 700);
 
-    // Contact form submission + validation
+    // Contact form submission + validation (with red error, shake, popup)
     document.getElementById("contactForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
