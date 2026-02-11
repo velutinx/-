@@ -46,7 +46,7 @@
   <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
 
-  <!-- All shared functionality inline with localStorage persistence + blob memory -->
+  <!-- All shared functionality inline with localStorage persistence + robust blob memory -->
   <script>
     // Load saved preferences on page load
     const savedLang = localStorage.getItem("language");
@@ -54,18 +54,31 @@
 
     let isJapanese = savedLang === "jp";
 
-    // Apply saved language on load (including blobs + commission text)
-    if (isJapanese) {
-      document.querySelectorAll(".blob-text").forEach(t => {
-        t.textContent = t.dataset.jp;
+    // Function to translate blobs (robust — polls if not ready)
+    function translateBlobs(isJp) {
+      const blobs = document.querySelectorAll(".blob-text");
+      if (blobs.length === 0) {
+        setTimeout(() => translateBlobs(isJp), 100);
+        return;
+      }
+      blobs.forEach(t => {
+        t.textContent = isJp ? t.dataset.jp : t.dataset.en;
       });
-      document.getElementById("comTitle").textContent = "コミッション";
-      document.getElementById("comInfo").textContent = "コミッション情報は近日中に追加されます。";
-      document.getElementById("comList").innerHTML = `✦ 料金<br>✦ サンプル<br>✦ 利用規約<br>✦ 受付状況<br><br>（プレースホルダー — 近日公開 ♡）`;
-      document.getElementById("langToggle").textContent = "🇺🇸";
-    } else {
-      document.getElementById("langToggle").textContent = "🇯🇵";
     }
+
+    // Apply saved language on load
+    translateBlobs(isJapanese);
+
+    // Page-specific commission text
+    document.getElementById("comTitle").textContent = isJapanese ? "コミッション" : "COMMISSIONS";
+    document.getElementById("comInfo").textContent = isJapanese 
+      ? "コミッション情報は近日中に追加されます。" 
+      : "Commission information will be added here soon.";
+    document.getElementById("comList").innerHTML = isJapanese 
+      ? `✦ 料金<br>✦ サンプル<br>✦ 利用規約<br>✦ 受付状況<br><br>（プレースホルダー — 近日公開 ♡）`
+      : `✦ Prices<br>✦ Examples<br>✦ Terms of Service<br>✦ Queue Status<br><br>(Placeholder content — coming soon ♡)`;
+
+    document.getElementById("langToggle").textContent = isJapanese ? "🇺🇸" : "🇯🇵";
 
     // Apply saved dark mode on load
     if (savedDark) {
@@ -81,9 +94,7 @@
       setTimeout(() => {
         isJapanese = !isJapanese;
 
-        document.querySelectorAll(".blob-text").forEach(t => {
-          t.textContent = isJapanese ? t.dataset.jp : t.dataset.en;
-        });
+        translateBlobs(isJapanese);
 
         document.getElementById("comTitle").textContent = isJapanese ? "コミッション" : "COMMISSIONS";
         document.getElementById("comInfo").textContent = isJapanese 
