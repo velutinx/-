@@ -168,7 +168,7 @@
         name.style.animation = 'shake 0.35s';
         hasError = true;
       }
-      if (!email.value.trim() || !email.value.includes("@")) {
+      if (!email.value.trim()) {
         email.style.borderColor = '#b33';
         email.style.animation = 'shake 0.35s';
         hasError = true;
@@ -187,7 +187,7 @@
 
       const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
 
-      // Optimistic success popup
+      // Show optimistic success
       showPopup(successText);
 
       // Prepare form data
