@@ -94,151 +94,99 @@
 
         langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
 
-        // Translate contact form
-        document.getElementById("contactTitle").textContent = isJapanese ? "お問い合わせ" : "CONTACT";
-        document.getElementById("contactDesc").textContent = isJapanese 
-          ? "メールで連絡したい場合はこちらのフォームをご利用ください。" 
-          : "Use this form if you'd like to contact me via email!";
+  // Contact form submission + validation
+  document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-        document.getElementById("labelName").textContent = isJapanese ? "お名前" : "NAME";
-        document.getElementById("labelEmail").textContent = isJapanese ? "メールアドレス" : "EMAIL";
-        document.getElementById("labelMessage").textContent = isJapanese ? "メッセージ" : "MESSAGE";
-        document.getElementById("name").placeholder = isJapanese ? "お名前" : "Name";
-        document.getElementById("email").placeholder = isJapanese ? "メールアドレス" : "Email";
-        document.getElementById("message").placeholder = isJapanese ? "メッセージ" : "Message";
-        document.getElementById("sendBtn").textContent = isJapanese ? "送信" : "SEND";
-      }, 180);
-    };
-
-    // Theme toggle
-    themeToggle.onclick = () => document.body.classList.toggle("dark");
-
-    // Cursor sparkles
-    let lastStarTime = 0;
-    document.addEventListener("mousemove", (e) => {
-      const now = Date.now();
-      if (now - lastStarTime < 45) return;
-      lastStarTime = now;
-
-      const star = document.createElement("div");
-      star.className = "star";
-      star.textContent = "✦";
-      star.style.setProperty("--drift", Math.random());
-      star.style.left = e.clientX + "px";
-      star.style.top = e.clientY + "px";
-
-      document.body.appendChild(star);
-      setTimeout(() => star.remove(), 2000);
+    // Reset previous errors
+    const inputs = [name, email, message];
+    inputs.forEach(input => {
+      input.style.borderColor = ''; // reset
+      input.style.animation = 'none'; // reset shake
     });
 
-    // Social area falling stars
-    const socialArea = document.getElementById("socialArea");
-    setInterval(() => {
-      const star = document.createElement("div");
-      star.className = "social-star";
-      star.textContent = "✦";
-      star.style.left = Math.random() * socialArea.clientWidth + "px";
-      star.style.top = "0px";
-      socialArea.appendChild(star);
-      setTimeout(() => star.remove(), 6000);
-    }, 700);
+    let hasError = false;
 
-    // Contact form submission + validation (red border + shake + popup)
-    document.getElementById("contactForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      // Define inputs (this was missing in previous versions)
-      const name = document.getElementById("name");
-      const email = document.getElementById("email");
-      const message = document.getElementById("message");
-
-      // Reset previous errors
-      [name, email, message].forEach(input => {
-        input.style.borderColor = ''; // reset to default
-        input.style.animation = 'none'; // reset shake
-      });
-
-      let hasError = false;
-
-      if (!name.value.trim()) {
-        name.style.borderColor = '#b33'; // red
-        name.style.animation = 'shake 0.35s';
-        hasError = true;
-      }
-      if (!email.value.trim() || !email.value.includes("@")) {
-        email.style.borderColor = '#b33';
-        email.style.animation = 'shake 0.35s';
-        hasError = true;
-      }
-      if (!message.value.trim()) {
-        message.style.borderColor = '#b33';
-        message.style.animation = 'shake 0.35s';
-        hasError = true;
-      }
-
-      if (hasError) {
-        const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
-        showPopup(errorText);
-        return;
-      }
-
-      const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
-      showPopup(successText);
-
-      const subject = encodeURIComponent("Website Contact — " + name.value);
-      const body = encodeURIComponent(
-        "Name: " + name.value + "\n" +
-        "Email: " + email.value + "\n\n" +
-        message.value
-      );
-
-      window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
-      this.reset();
-    });
-
-    // Popup function (red + bold + fade in/out after 5s)
-    function showPopup(text) {
-      const popup = document.createElement("div");
-      popup.textContent = text;
-      popup.style.position = "fixed";
-      popup.style.top = "20px";
-      popup.style.right = "20px";
-      popup.style.background = "#eeeae0";
-      popup.style.border = "3px solid #aa9e76";
-      popup.style.padding = "14px 18px";
-      popup.style.borderRadius = "10px";
-      popup.style.fontSize = "13px";
-      popup.style.letterSpacing = "1px";
-      popup.style.fontWeight = "700";
-      popup.style.color = "#b33"; // red text
-      popup.style.boxShadow = "6px 6px 0 rgba(0,0,0,0.4)";
-      popup.style.zIndex = "99999";
-      popup.style.opacity = "0";
-      popup.style.transition = "opacity 0.5s ease";
-
-      document.body.appendChild(popup);
-
-      // Fade in
-      setTimeout(() => popup.style.opacity = "1", 10);
-
-      // Fade out after 5 seconds
-      setTimeout(() => {
-        popup.style.opacity = "0";
-        setTimeout(() => popup.remove(), 500);
-      }, 5000);
+    // Name: must not be empty
+    if (!name.value.trim()) {
+      name.style.borderColor = '#b33'; // red
+      name.style.animation = 'shake 0.35s';
+      hasError = true;
     }
 
-    // Send button shake on click
-    document.getElementById("sendBtn").addEventListener("click", () => {
-      const btn = document.getElementById("sendBtn");
-      btn.style.animation = "none";
-      void btn.offsetWidth; // reflow
-      btn.style.animation = "shake 0.35s";
-    });
-  </script>
+    // Email: must not be empty AND must contain @
+    if (!email.value.trim() || !email.value.includes("@")) {
+      email.style.borderColor = '#b33';
+      email.style.animation = 'shake 0.35s';
+      hasError = true;
+    }
 
-  <!-- Shared tab title animation -->
-  <script src="/assets/js/tab-title-animation.js"></script>
+    // Message: must not be empty
+    if (!message.value.trim()) {
+      message.style.borderColor = '#b33';
+      message.style.animation = 'shake 0.35s';
+      hasError = true;
+    }
 
-</body>
-</html>
+    // Show popup if ANY error (empty OR invalid email)
+    if (hasError) {
+      const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
+      showPopup(errorText);
+      return;
+    }
+
+    // Success
+    const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
+    showPopup(successText);
+
+    const subject = encodeURIComponent("Website Contact — " + name.value);
+    const body = encodeURIComponent(
+      "Name: " + name.value + "\n" +
+      "Email: " + email.value + "\n\n" +
+      message.value
+    );
+
+    window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
+    this.reset();
+  });
+
+  // Popup function (fades in + out after 5s)
+  function showPopup(text) {
+    const popup = document.createElement("div");
+    popup.textContent = text;
+    popup.style.position = "fixed";
+    popup.style.top = "20px";
+    popup.style.right = "20px";
+    popup.style.background = "#eeeae0";
+    popup.style.border = "3px solid #aa9e76";
+    popup.style.padding = "14px 18px";
+    popup.style.borderRadius = "10px";
+    popup.style.fontSize = "13px";
+    popup.style.letterSpacing = "1px";
+    popup.style.fontWeight = "700";
+    popup.style.color = "#b33"; // red text
+    popup.style.boxShadow = "6px 6px 0 rgba(0,0,0,0.4)";
+    popup.style.zIndex = "99999";
+    popup.style.opacity = "0";
+    popup.style.transition = "opacity 0.5s ease";
+
+    document.body.appendChild(popup);
+
+    // Fade in
+    setTimeout(() => popup.style.opacity = "1", 10);
+
+    // Fade out after 5 seconds
+    setTimeout(() => {
+      popup.style.opacity = "0";
+      setTimeout(() => popup.remove(), 500);
+    }, 5000);
+  }
+
+  // Send button shake on click
+  document.getElementById("sendBtn").addEventListener("click", () => {
+    const btn = document.getElementById("sendBtn");
+    btn.style.animation = "none";
+    void btn.offsetWidth; // reflow
+    btn.style.animation = "shake 0.35s";
+  });
+</script>
