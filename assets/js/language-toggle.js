@@ -1,26 +1,23 @@
-/* =========================================================
-   ===== Cursor Sparkles
-   ========================================================= */
-(function () {
-  let lastStarTime = 0;
+let isJapanese = false;
+const blobTexts = document.querySelectorAll(".blob-text");
+const heroSub = document.getElementById("heroSub");
+const langToggle = document.getElementById("langToggle");
+const langSwipe = document.getElementById("langSwipe");
 
-  document.addEventListener("mousemove", (e) => {
-    const now = Date.now();
-    if (now - lastStarTime < 45) return;
-    lastStarTime = now;
+langToggle.onclick = () => {
+  langSwipe.classList.remove("active");
+  void langSwipe.offsetWidth;
+  langSwipe.classList.add("active");
 
-    const star = document.createElement("div");
-    star.className = "star";
-    star.textContent = "✦";
-    star.style.setProperty("--drift", Math.random());
+  setTimeout(() => {
+    isJapanese = !isJapanese;
 
-    const x = e.clientX;
-    const y = e.clientY;
+    blobTexts.forEach(t => {
+      t.textContent = isJapanese ? t.dataset.jp : t.dataset.en;
+    });
 
-    star.style.left = x + "px";
-    star.style.top = y + "px";
+    heroSub.textContent = isJapanese ? "♡ フリーランスイラストレーター ♡" : "♡ Freelance Illustrator ♡";
 
-    document.body.appendChild(star);
-    setTimeout(() => star.remove(), 2000);
-  });
-})();
+    langToggle.textContent = isJapanese ? "EN" : "日本語";
+  }, 180);
+};
