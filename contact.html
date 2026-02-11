@@ -143,50 +143,79 @@
       setTimeout(() => star.remove(), 6000);
     }, 700);
 
-// Contact form submission + validation
-document.getElementById("contactForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+    // Contact form submission + validation (red border + shake + popup)
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-  // Define the input elements (this was missing!)
-  const name = document.getElementById("name");
-  const email = document.getElementById("email");
-  const message = document.getElementById("message");
+      // Define inputs (this was missing in previous versions)
+      const name = document.getElementById("name");
+      const email = document.getElementById("email");
+      const message = document.getElementById("message");
 
-  // Reset previous errors
-  [name, email, message].forEach(f => f.classList.remove("input-error"));
+      // Reset previous errors
+      [name, email, message].forEach(input => {
+        input.style.borderColor = ''; // reset to default
+        input.style.animation = 'none'; // reset shake
+      });
 
-  let hasError = false;
+      let hasError = false;
 
-  if (!name.value.trim()) { name.classList.add("input-error"); hasError = true; }
-  if (!email.value.includes("@")) { email.classList.add("input-error"); hasError = true; }
-  if (!message.value.trim()) { message.classList.add("input-error"); hasError = true; }
+      if (!name.value.trim()) {
+        name.style.borderColor = '#b33'; // red
+        name.style.animation = 'shake 0.35s';
+        hasError = true;
+      }
+      if (!email.value.trim() || !email.value.includes("@")) {
+        email.style.borderColor = '#b33';
+        email.style.animation = 'shake 0.35s';
+        hasError = true;
+      }
+      if (!message.value.trim()) {
+        message.style.borderColor = '#b33';
+        message.style.animation = 'shake 0.35s';
+        hasError = true;
+      }
 
-  if (hasError) {
-    const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
-    showPopup(errorText);
-    return;
-  }
+      if (hasError) {
+        const errorText = isJapanese ? "すべての項目を正しく入力してください ♡" : "Please fill out all fields correctly ♡";
+        showPopup(errorText);
+        return;
+      }
 
-  const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
-  showPopup(successText);
+      const successText = isJapanese ? "送信されました！近日中にご連絡します ♡♡" : "Message sent successfully! You will hear back soon! ♡♡";
+      showPopup(successText);
 
-  const subject = encodeURIComponent("Website Contact — " + name.value);
-  const body = encodeURIComponent(
-    "Name: " + name.value + "\n" +
-    "Email: " + email.value + "\n\n" +
-    message.value
-  );
+      const subject = encodeURIComponent("Website Contact — " + name.value);
+      const body = encodeURIComponent(
+        "Name: " + name.value + "\n" +
+        "Email: " + email.value + "\n\n" +
+        message.value
+      );
 
-  window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
-  this.reset();
-});
+      window.location.href = "mailto:velutinx@yahoo.com?subject=" + subject + "&body=" + body;
+      this.reset();
+    });
 
-    // Popup function (fades in + out after 5s)
+    // Popup function (red + bold + fade in/out after 5s)
     function showPopup(text) {
       const popup = document.createElement("div");
-      popup.className = "popup";
       popup.textContent = text;
+      popup.style.position = "fixed";
+      popup.style.top = "20px";
+      popup.style.right = "20px";
+      popup.style.background = "#eeeae0";
+      popup.style.border = "3px solid #aa9e76";
+      popup.style.padding = "14px 18px";
+      popup.style.borderRadius = "10px";
+      popup.style.fontSize = "13px";
+      popup.style.letterSpacing = "1px";
+      popup.style.fontWeight = "700";
+      popup.style.color = "#b33"; // red text
+      popup.style.boxShadow = "6px 6px 0 rgba(0,0,0,0.4)";
+      popup.style.zIndex = "99999";
       popup.style.opacity = "0";
+      popup.style.transition = "opacity 0.5s ease";
+
       document.body.appendChild(popup);
 
       // Fade in
