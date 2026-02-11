@@ -5,7 +5,7 @@
   <title>VELUTINX — Poll</title>
   <link rel="stylesheet" href="/assets/css/styles.css">
   <style>
-    /* Poll-specific styles (add to styles.css if you prefer shared) */
+    /* Poll-specific styles */
     .poll-section {
       max-width: 1600px;
       margin: 0 auto;
@@ -31,7 +31,7 @@
       position: relative;
     }
 
-    /* Big cards (left selected, right rotating) */
+    /* Big cards */
     .big-card {
       position: absolute;
       top: 50%;
@@ -54,12 +54,13 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      loading: lazy;
     }
 
     #leftBig { left: -600px; }
     #rightBig { right: -600px; }
 
-    /* Grid of small cards */
+    /* Grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -85,6 +86,7 @@
     .card img {
       width: 100%;
       border-radius: 8px;
+      loading: lazy;
     }
 
     .progress {
@@ -124,7 +126,7 @@
       font-weight: bold;
     }
 
-    /* Bottom area */
+    /* Bottom */
     .bottom {
       display: flex;
       justify-content: center;
@@ -173,23 +175,13 @@
     }
 
     @media (max-width: 1200px) {
-      .big-card {
-        display: none;
-      }
-      .grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+      .big-card { display: none; }
+      .grid { grid-template-columns: repeat(4, 1fr); }
     }
 
     @media (max-width: 800px) {
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .bottom {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-      }
+      .grid { grid-template-columns: repeat(3, 1fr); }
+      .bottom { flex-direction: column; align-items: center; gap: 20px; }
     }
   </style>
 </head>
@@ -218,10 +210,10 @@
       <div class="poll-page">
         <!-- Big cards -->
         <div class="big-card" id="leftBig">
-          <img id="leftImg" src="/images/poll/1.jpg">
+          <img id="leftImg" src="/images/poll/1.jpg" loading="lazy">
         </div>
         <div class="big-card" id="rightBig">
-          <img id="rightImg" src="/images/poll/1.jpg">
+          <img id="rightImg" src="/images/poll/1.jpg" loading="lazy">
         </div>
 
         <!-- Center content -->
@@ -259,7 +251,7 @@
   <!-- Shared navigation loader -->
   <script src="/assets/js/navigation.js"></script>
 
-  <!-- All shared functionality inline with localStorage persistence + poll logic -->
+  <!-- Poll logic -->
   <script>
     // ---------- Persistence & language/theme ----------
     const savedLang = localStorage.getItem("language");
@@ -267,7 +259,6 @@
 
     let isJapanese = savedLang === "jp";
 
-    // Robust blob translation (polls if not ready)
     function translateBlobs(isJp) {
       const blobs = document.querySelectorAll(".blob-text");
       if (blobs.length === 0) {
@@ -279,16 +270,13 @@
       });
     }
 
-    // Apply saved language on load
     translateBlobs(isJapanese);
     document.getElementById("langToggle").textContent = isJapanese ? "🇺🇸" : "🇯🇵";
 
-    // Apply saved dark mode
     if (savedDark) {
       document.body.classList.add("dark");
     }
 
-    // Language toggle
     langToggle.onclick = () => {
       langSwipe.classList.remove("active");
       void langSwipe.offsetWidth;
@@ -296,16 +284,12 @@
 
       setTimeout(() => {
         isJapanese = !isJapanese;
-
         translateBlobs(isJapanese);
-
         langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
-
         localStorage.setItem("language", isJapanese ? "jp" : "en");
       }, 180);
     };
 
-    // Theme toggle
     themeToggle.onclick = () => {
       document.body.classList.toggle("dark");
       localStorage.setItem("darkMode", document.body.classList.contains("dark"));
@@ -343,8 +327,9 @@
 
     // ---------- Poll logic ----------
     const SUPABASE_URL = "https://knbvlyngmjaxndkiqggl.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtuYnZseW5nbWpheG5ka2lxZ2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MjI0NzEsImV4cCI6MjA4NjM5ODQ3MX0.mxthCDB6dCaHcEDMFN48pFnaJmcBbilXfP7tL-YAV08"; // <-- Replace with your new project's anon key
-    const POLL_ID = "character_poll_new"; // <-- Your new poll ID
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtuYnZseW5nbWpheG5ka2lxZ2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MjI0NzEsImV4cCI6MjA4NjM5ODQ3MX0.mxthCDB6dCaHcEDMFN48pFnaJmcBbilXfP7tL-YAV08"; // your anon key
+
+    const POLL_ID = "character_poll_new";
     const TOTAL = 12;
 
     const grid = document.getElementById("grid");
@@ -358,7 +343,7 @@
 
     let rotateIndex = 1;
 
-    // Voter hash (unique per browser)
+    // Voter hash — stored in localStorage (prevents multiple votes from same browser)
     let voterHash = localStorage.getItem("voter_hash_poll");
     if (!voterHash) {
       voterHash = crypto.randomUUID();
@@ -372,7 +357,7 @@
       card.dataset.id = i;
 
       card.innerHTML = `
-        <img src="/images/poll/${i}.jpg">
+        <img src="/images/poll/${i}.jpg" loading="lazy">
         <div class="progress">
           <div class="progress-fill"></div>
           <div class="progress-text">0%</div>
@@ -380,9 +365,9 @@
         <div class="label">Loading…</div>
       `;
 
-      card.onclick = () => {
+      card.onclick = async () => {
         showSelected(i);
-        vote(i);
+        await vote(i);
       };
 
       grid.appendChild(card);
@@ -411,70 +396,91 @@
     rotate();
     showSelected(1);
 
-    // Vote function
+    // Vote function — allows changing vote (upsert)
     async function vote(optionId) {
-      await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          "Content-Type": "application/json",
-          Prefer: "resolution=merge-duplicates"
-        },
-        body: JSON.stringify({
-          poll_id: POLL_ID,
-          option_id: optionId,
-          voter_hash: voterHash
-        })
-      });
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json",
+            Prefer: "resolution=merge-duplicates"  // Key line: allows updating existing vote
+          },
+          body: JSON.stringify({
+            poll_id: POLL_ID,
+            option_id: optionId,
+            voter_hash: voterHash
+          })
+        });
 
-      fetchResults();
-      fetchLeaderboard();
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Vote failed:", errorData);
+          alert("Failed to vote. Please try again.");
+          return;
+        }
+
+        console.log("Vote successful / updated");
+        fetchResults();
+        fetchLeaderboard();
+      } catch (err) {
+        console.error("Vote error:", err);
+        alert("Vote failed. Check connection.");
+      }
     }
 
     // Fetch results for progress bars
     async function fetchResults() {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/votes?poll_id=eq.${POLL_ID}&select=option_id`, {
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-      });
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/votes?poll_id=eq.${POLL_ID}&select=option_id`, {
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+        });
 
-      const votes = await res.json();
-      const counts = {};
-      for (let i = 1; i <= TOTAL; i++) counts[i] = 0;
-      votes.forEach(v => counts[v.option_id]++);
+        const votes = await res.json();
+        const counts = {};
+        for (let i = 1; i <= TOTAL; i++) counts[i] = 0;
+        votes.forEach(v => counts[v.option_id]++);
 
-      const totalVotes = votes.length;
+        const totalVotes = votes.length;
 
-      document.querySelectorAll(".card").forEach(card => {
-        const id = Number(card.dataset.id);
-        const percent = totalVotes ? Math.round((counts[id] / totalVotes) * 100) : 0;
+        document.querySelectorAll(".card").forEach(card => {
+          const id = Number(card.dataset.id);
+          const percent = totalVotes ? Math.round((counts[id] / totalVotes) * 100) : 0;
 
-        card.querySelector(".progress-fill").style.width = percent + "%";
-        card.querySelector(".progress-text").textContent = percent + "%";
-      });
+          card.querySelector(".progress-fill").style.width = percent + "%";
+          card.querySelector(".progress-text").textContent = percent + "%";
+        });
+      } catch (err) {
+        console.error("Fetch results error:", err);
+      }
     }
 
     // Fetch leaderboard + card labels
     async function fetchLeaderboard() {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/poll_result?poll_id=eq.${POLL_ID}&order=score.desc`, {
-        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-      });
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/poll_result?poll_id=eq.${POLL_ID}&order=score.desc`, {
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+        });
 
-      const rows = await res.json();
+        const rows = await res.json();
 
-      let leaderboardHTML = "";
-      rows.forEach(r => {
-        leaderboardHTML += `<div class="leaderboard-entry">${r.character_name}: ${r.score.toFixed(1)}</div>`;
-      });
+        let leaderboardHTML = "";
+        rows.forEach(r => {
+          leaderboardHTML += `<div class="leaderboard-entry">${r.character_name}: ${r.score.toFixed(1)}</div>`;
+        });
 
-      resultsBox.innerHTML = leaderboardHTML || "No votes yet";
+        resultsBox.innerHTML = leaderboardHTML || "No votes yet";
 
-      // Update card labels
-      document.querySelectorAll(".card").forEach(card => {
-        const id = Number(card.dataset.id);
-        const row = rows.find(r => r.option_id === id);
-        if (row) card.querySelector(".label").textContent = row.character_name;
-      });
+        // Update card labels
+        document.querySelectorAll(".card").forEach(card => {
+          const id = Number(card.dataset.id);
+          const row = rows.find(r => r.option_id === id);
+          if (row) card.querySelector(".label").textContent = row.character_name;
+        });
+      } catch (err) {
+        console.error("Fetch leaderboard error:", err);
+      }
     }
 
     // Initial load
