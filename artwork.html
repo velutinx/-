@@ -90,17 +90,6 @@ langToggle.onclick = () => {
       setTimeout(() => star.remove(), 2000);
     });
 
-    // Full-screen falling sparkles (adapted from your original)
-    setInterval(() => {
-      const star = document.createElement("div");
-      star.className = "falling-star";
-      star.textContent = "✦";
-      star.style.left = Math.random() * 100 + "vw";
-      star.style.setProperty("--drift", Math.random());
-      document.body.appendChild(star);
-      setTimeout(() => star.remove(), 6000);
-    }, 700);
-
     // Tab title animation
     const titles = ["VELUTINX", "ELUTINX", "LUTINX", "UTINX", "TINX", "INX", "NX", "X"];
     let index = 0;
