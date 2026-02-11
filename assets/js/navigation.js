@@ -1,26 +1,15 @@
-/* =========================================================
-   ===== Cursor Sparkles
-   ========================================================= */
-(function () {
-  let lastStarTime = 0;
-
-  document.addEventListener("mousemove", (e) => {
-    const now = Date.now();
-    if (now - lastStarTime < 45) return;
-    lastStarTime = now;
-
-    const star = document.createElement("div");
-    star.className = "star";
-    star.textContent = "✦";
-    star.style.setProperty("--drift", Math.random());
-
-    const x = e.clientX;
-    const y = e.clientY;
-
-    star.style.left = x + "px";
-    star.style.top = y + "px";
-
-    document.body.appendChild(star);
-    setTimeout(() => star.remove(), 2000);
+// Load shared nav HTML
+fetch('assets/includes/navigation.html')
+  .then(response => response.text())
+  .then(html => {
+    document.querySelector('#navContainer').innerHTML = html; // Assumes a <div id="navContainer"></div> where nav goes
+    setupNavLinks(); // Call after HTML is loaded
   });
-})();
+
+function setupNavLinks() {
+  document.getElementById('navHome').onclick = () => location.href = "/";
+  document.getElementById('navCom').onclick = () => location.href = "/commission.html";
+  document.getElementById('navArt').onclick = () => location.href = "/artwork.html";
+  document.getElementById('navContact').onclick = () => location.href = "/contact.html";
+  document.getElementById('navPoll').onclick = () => location.href = "/poll-website/";
+}
