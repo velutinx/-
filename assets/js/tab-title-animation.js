@@ -37,15 +37,19 @@ function animateTitle() {
   // Phase 1: VELUTINX solid for 2 seconds
   document.title = BASE_TITLE;
   setTimeout(() => {
-    // Phase 2: Three quick blank flashes (use " " to avoid white flash)
-    let blankCount = 0;
-    const blankInterval = setInterval(() => {
-      document.title = "⠀⠀⠀⠀⠀⠀";  // single space → truly blank, no white text
-      setTimeout(() => {
-        document.title = BASE_TITLE;
-        blankCount++;
-        if (blankCount >= 3) {
-          clearInterval(blankInterval);
+// Phase 2: Three quick blank flashes
+let blankCount = 0;
+const blankInterval = setInterval(() => {
+  document.title = "\u200B";  // ← this is the fix
+  setTimeout(() => {
+    document.title = BASE_TITLE;
+    blankCount++;
+    if (blankCount >= 3) {
+      clearInterval(blankInterval);
+      // ... rest of code ...
+    }
+  }, BLANK_DURATION);
+}, BLANK_DURATION * 2);
 
           // Phase 3: Show page-specific title for 3 seconds
           document.title = pageTitle;
