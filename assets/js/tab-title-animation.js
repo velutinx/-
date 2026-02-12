@@ -14,7 +14,7 @@ const PAGE_TITLES = {
   "/commission.html": "COMMISSIONS",
   "/artwork.html":   "ARTWORK",
   "/contact.html":   "CONTACT",
-  "/poll-website/":  "POLL"
+  "/poll.html":  "POLL"
 };
 
 function animateTitle() {
