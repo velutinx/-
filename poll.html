@@ -31,10 +31,10 @@
       position: relative;
     }
 
-    /* Big cards - larger, closer, and repositioned */
+    /* Big cards */
     .big-card {
       position: absolute;
-      top: 43%; /* moved up a bit (north) */
+      top: 43%;
       transform: translateY(-50%);
       width: 700px;
       height: 1050px;
@@ -57,13 +57,8 @@
       loading: lazy;
     }
 
-    #leftBig { 
-      left: -575px;  /* moved left (west) */
-    }
-
-    #rightBig { 
-      right: -575px; /* moved right (east) */
-    }
+    #leftBig { left: -575px; }
+    #rightBig { right: -575px; }
 
     /* Grid */
     .grid {
@@ -78,11 +73,17 @@
 
     .card {
       background: rgba(245,241,223,0.97);
+      border: 3px solid #ffffff; /* white border in light mode */
       border-radius: 12px;
       padding: 8px;
       cursor: pointer;
       position: relative;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, border-color 0.3s ease;
+    }
+
+    body.dark .card {
+      background: rgba(30, 30, 35, 0.97);
+      border: 3px solid #444; /* dark border in dark mode */
     }
 
     .card:hover {
@@ -144,10 +145,18 @@
 
     #leaderboard {
       background: rgba(255,255,255,0.9);
+      border: 3px solid #ffffff; /* white border in light mode */
       padding: 12px 16px;
       border-radius: 10px;
       min-width: 260px;
       text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark #leaderboard {
+      background: rgba(30, 30, 35, 0.9);
+      border: 3px solid #444; /* dark border in dark mode */
+      color: var(--text-dark);
     }
 
     #leaderboard h3 {
@@ -211,11 +220,11 @@
 
     <!-- Poll section -->
     <section class="poll-section">
-      <h1 class="poll-title">Vote for Your Favorite Character</h1>
-      <p class="poll-subtitle">Click once — you can change your vote anytime</p>
+      <h1 class="poll-title" data-en="Vote for Your Favorite Character" data-jp="お気に入りのキャラクターに投票">Vote for Your Favorite Character</h1>
+      <p class="poll-subtitle" data-en="Click once — you can change your vote anytime" data-jp="一度クリック — いつでも投票を変更できます">Click once — you can change your vote anytime</p>
 
       <div class="poll-page">
-        <!-- Big cards - moved northwest/northeast -->
+        <!-- Big cards -->
         <div class="big-card" id="leftBig">
           <img id="leftImg" src="/images/poll/1.jpg" loading="lazy">
         </div>
@@ -229,8 +238,8 @@
 
           <div class="bottom">
             <div id="leaderboard">
-              <h3>Leaderboard</h3>
-              <div class="tooltip">Website + Discord votes</div>
+              <h3 data-en="Leaderboard" data-jp="リーダーボード">Leaderboard</h3>
+              <div class="tooltip" data-en="Website + Discord votes" data-jp="ウェブサイト + Discord 投票">Website + Discord votes</div>
               <div id="results">Loading…</div>
             </div>
 
@@ -238,7 +247,7 @@
               <a class="icon-link" href="https://discord.gg/6sHSVMEE" target="_blank">
                 <img src="/images/LogoDiscord.png" alt="Discord">
               </a>
-              <div class="discord-disclaimer">Join discord for an extra vote!!</div>
+              <div class="discord-disclaimer" data-en="Join discord for an extra vote!!" data-jp="追加投票のためにDiscordに参加!!">Join discord for an extra vote!!</div>
             </div>
           </div>
         </div>
@@ -260,18 +269,14 @@
 
     let isJapanese = savedLang === "jp";
 
-    function translateBlobs(isJp) {
-      const blobs = document.querySelectorAll(".blob-text");
-      if (blobs.length === 0) {
-        setTimeout(() => translateBlobs(isJp), 100);
-        return;
-      }
-      blobs.forEach(t => {
-        t.textContent = isJp ? t.dataset.jp : t.dataset.en;
+    function translateText() {
+      document.querySelectorAll('[data-en][data-jp]').forEach(el => {
+        el.textContent = isJapanese ? el.dataset.jp : el.dataset.en;
       });
     }
 
-    translateBlobs(isJapanese);
+    translateText();
+
     document.getElementById("langToggle").textContent = isJapanese ? "🇺🇸" : "🇯🇵";
 
     if (savedDark) {
@@ -285,7 +290,7 @@
 
       setTimeout(() => {
         isJapanese = !isJapanese;
-        translateBlobs(isJapanese);
+        translateText();
         langToggle.textContent = isJapanese ? "🇺🇸" : "🇯🇵";
         localStorage.setItem("language", isJapanese ? "jp" : "en");
       }, 180);
