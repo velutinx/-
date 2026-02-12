@@ -22,7 +22,7 @@ fetch('/assets/includes/navigation.html')
         if (id === 'navHome') location.href = '/';
         if (id === 'navCom') location.href = '/commission.html';
         if (id === 'navArt') location.href = '/artwork.html';
-        if (id === 'navPoll') location.href = '/poll-website/';
+        if (id === 'navPoll') location.href = '/poll.html';
         if (id === 'navContact') location.href = '/contact.html';
       });
 
@@ -43,3 +43,4 @@ fetch('/assets/includes/navigation.html')
     });
   })
   .catch(err => console.error('Navigation load error:', err));
+
