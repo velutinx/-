@@ -489,8 +489,8 @@ async function fetchLeaderboard() {
     if (!res.ok) throw new Error(await res.text());
 
     const rows = await res.json();
-    //           ^^^ now rows[0] = option_id 1, rows[1] = option_id 2, etc.
-
+console.log("poll_result rows:", rows);
+console.log("Number of rows:", rows.length);
     let html = "";
     rows.forEach(r => {
       const isSpoiled = r.selected_at !== null && r.selected_at !== undefined;
