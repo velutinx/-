@@ -9,7 +9,7 @@
 }
 
 /* ====================================================
-   Shared Animated Background (cream palette + wave)
+   Shared Animated Background
    ==================================================== */
 
 .background-wrapper {
@@ -122,7 +122,7 @@ body.dark .wave-overlay {
   mix-blend-mode: soft-light;
 }
 
-/* Make sure main containers are above background */
+/* Main containers above background */
 #page,
 .hero,
 .commission-wrap,
@@ -136,7 +136,9 @@ body.dark .wave-overlay {
 /* =========================================================
    Global Reset & Body
    ========================================================= */
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -163,9 +165,7 @@ body.dark {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ────────────────────────────────────────────────
-   Your existing navigation blobs – make sure size is controlled
-   ──────────────────────────────────────────────── */
+/* Navigation Blobs – strict size control */
 .nav {
   display: flex;
   justify-content: center;
@@ -174,8 +174,9 @@ body.dark {
 }
 
 .blob-btn {
-  width: 180px;                    /* keep this fixed size */
-  max-width: 180px;                /* prevent overflow */
+  width: 180px !important;
+  max-width: 180px !important;
+  height: auto;
   cursor: pointer;
   transform-box: fill-box;
   transform-origin: center;
@@ -191,17 +192,21 @@ body.dark {
   stroke-width: 6;
 }
 
-body.dark .blob-svg path { stroke: var(--divider-dark); }
+body.dark .blob-svg path {
+  stroke: var(--divider-dark);
+}
 
 .blob-text {
   font-weight: 900;
   letter-spacing: 2px;
-  font-size: 19px;                 /* this is normal size – was not changed */
+  font-size: 19px !important;
   fill: var(--text);
   pointer-events: none;
 }
 
-body.dark .blob-text { fill: var(--text-dark); }body.dark .blob-text { fill: var(--text-dark); }
+body.dark .blob-text {
+  fill: var(--text-dark);
+}
 
 /* Dividers */
 .divider {
@@ -211,74 +216,12 @@ body.dark .blob-text { fill: var(--text-dark); }body.dark .blob-text { fill: var
   margin: 22px auto;
   border-radius: 4px;
 }
-body.dark .divider { background: var(--divider-dark); }
 
-/* Hero Section */
-.hero {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 40px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
+body.dark .divider {
+  background: var(--divider-dark);
 }
 
-.hero-image {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-}
-.hero-image img {
-  width: 320px;
-  border-radius: 16px;
-  z-index: 1;
-}
-
-.social-star {
-  position: absolute;
-  color: var(--divider);
-  font-size: 18px;
-  pointer-events: none;
-  animation: socialStarFall 6s linear forwards;
-  z-index: 2;
-}
-@keyframes socialStarFall {
-  from { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; }
-  to { opacity: 0; transform: translateY(300px); }
-}
-
-.hero-text { text-align: center; }
-.hero-name { font-size: 42px; font-weight: 800; letter-spacing: 4px; }
-.hero-sub { font-size: 14px; letter-spacing: 1px; margin: 10px 0; }
-
-/* Discord Button */
-.discord-link img {
-  width: 220px;
-  cursor: pointer;
-}
-.discord-link img:hover {
-  animation: blobWobble 1.6s ease-in-out infinite;
-}
-
-/* Cursor Sparkles */
-.star {
-  position: fixed;
-  pointer-events: none;
-  color: var(--divider);
-  font-size: 14px;
-  animation: driftFall 2s ease-out forwards;
-  z-index: 9999;
-}
-@keyframes driftFall {
-  to {
-    opacity: 0;
-    transform: translate(calc(-20px + 40px * var(--drift)), 90px) scale(0.4);
-  }
-}
-/* Commission Section */
+/* Commission Box – transparent/frosted */
 .commission-wrap {
   max-width: 1000px;
   margin: 0 auto;
@@ -287,42 +230,39 @@ body.dark .divider { background: var(--divider-dark); }
 }
 
 .commission-box {
-  background: transparent;                    /* no solid color – shows background through */
+  background: transparent;
   border: 2px solid var(--divider);
   border-radius: 16px;
   padding: 40px 36px;
   min-height: 360px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);    /* deeper shadow for depth */
-  backdrop-filter: blur(12px);                /* frosted glass effect */
-  -webkit-backdrop-filter: blur(12px);        /* Safari support */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
   transition: all 0.4s ease;
   text-align: center;
 }
 
-/* Light mode subtle tint */
 .commission-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(238, 234, 224, 0.18);      /* very faint cream/ivory veil */
+  background: rgba(238, 234, 224, 0.18);
   border-radius: 14px;
   z-index: -1;
   pointer-events: none;
 }
 
-/* Dark mode adjustments */
 body.dark .commission-box {
   border-color: var(--divider-dark);
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 body.dark .commission-box::before {
-  background: rgba(22, 22, 27, 0.25);         /* faint dark veil */
+  background: rgba(22, 22, 27, 0.25);
 }
 
-/* Hover effect for interactivity */
 .commission-box:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 48px rgba(0,0,0,0.35);
@@ -653,6 +593,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
