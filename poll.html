@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/assets/css/styles.css">
 <style>
-  /* Poll-specific styles – restored exact layout from reference */
+  /* Poll-specific styles – fixed side big cards layout */
   .poll-section {
     max-width: 1600px;
     margin: 0 auto;
@@ -35,22 +35,22 @@
 
   .poll-page {
     position: relative;
-    min-height: 100vh; /* ensure enough height for side cards */
+    min-height: 100vh; /* ensure height for side positioning */
   }
 
-  /* Big preview cards – positioned on sides of grid */
+  /* Big preview cards – positioned far on sides */
   .big-card {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 600px;        /* slightly smaller to fit sides better */
+    width: 600px;
     height: 900px;
     border-radius: 24px;
     overflow: hidden;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 5;          /* below grid but above background */
+    z-index: 5; /* below grid cards */
     background: transparent;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
@@ -66,15 +66,16 @@
     loading: lazy;
   }
 
+  /* Push cards further left/right to flank the grid */
   #leftBig {
-    left: calc(50% - 800px); /* positions left of center grid */
+    left: calc(50% - 950px); /* adjust this number if needed — higher = further left */
   }
 
   #rightBig {
-    right: calc(50% - 800px); /* positions right of center grid */
+    right: calc(50% - 950px); /* adjust this number if needed — higher = further right */
   }
 
-  /* Center grid – small cards */
+  /* Center grid – small cards on top */
   .center {
     position: relative;
     z-index: 10;
