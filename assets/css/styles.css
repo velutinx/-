@@ -80,15 +80,24 @@ body::before {
   background: transparent;
 }
 
-body.dark .background-gradient {
-  background: linear-gradient(
-    132deg,
-    #1a0f08 0%,
-    #3a2014 25%,
-    #6b4e38 50%,
-    #a88b6a 75%,
-    #d4c9a8 100%
-  );
+body.dark .background-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(white 1px, transparent 1px),
+    radial-gradient(white 1px, transparent 1px),
+    radial-gradient(white 1px, transparent 1px);
+  background-size: 60px 60px, 80px 80px, 100px 100px;
+  background-position: 0 0, 30px 30px, 70px 70px;
+  opacity: 0.04;                  /* extremely subtle stars */
+  animation: starTwinkle 25s linear infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.04; }
+  50%      { opacity: 0.08; }
 }
 
 body.dark .wave-overlay {
@@ -684,6 +693,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
