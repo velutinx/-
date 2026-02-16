@@ -84,15 +84,15 @@ body::before {
 body.dark .background-gradient {
   background: linear-gradient(
     135deg,
-    #111111 0%,      /* ← changed to your requested starting color */
+    #00030f 0%,      /* near-black with tiny blue hint */
     #000814 20%,     /* deepest navy-black */
     #0a1125 40%,     /* very dark navy */
     #001220 60%,     /* cold dark space blue-black */
     #0b142b 80%,     /* muted deep navy */
-    #111111 100%     /* loop back to #111111 for smooth cycling */
+    #00030f 100%     /* loop back to near-black */
   );
   background-size: 400% 400%;
-  animation: darkNebulaFlow 55s ease infinite;
+  animation: darkNebulaFlow 55s ease infinite;   /* slower & calmer movement */
 }
 
 @keyframes darkNebulaFlow {
@@ -788,7 +788,6 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
-
 
 
 
