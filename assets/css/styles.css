@@ -667,68 +667,64 @@ body.dark .commission-box::before {
   display: grid;
   grid-template-columns: 70% 30%;
   gap: 40px;
+  background: transparent; /* ensure wrapper doesn't block bg */
 }
 
-.contact-left h2 {
-  font-size: 18px;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
+/* Form side – transparent glass */
+.contact-left {
+  background: transparent;
+  border: 2px solid var(--divider);
+  border-radius: 14px; /* keep your original radius */
+  padding: 32px; /* slightly adjusted padding for better fit — revert to original if needed */
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.35); /* keep your shadow style */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
 }
 
-.contact-left p {
-  font-size: 14px;
-  margin-bottom: 20px;
+.contact-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(238, 234, 224, 0.18); /* very faint cream veil */
+  border-radius: 12px;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.form-group {
-  margin-bottom: 16px;
+body.dark .contact-left {
+  border-color: var(--divider-dark);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.5); /* keep dark shadow */
 }
 
-.form-group label {
-  display: block;
-  font-size: 12px;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+body.dark .contact-left::before {
+  background: rgba(22, 22, 27, 0.25); /* faint dark veil */
 }
 
+/* Form inputs – transparent */
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
   border: 2px solid var(--divider);
   border-radius: 6px;
-  background: #eeeae0;
+  background: transparent; /* ← changed to transparent */
   font-size: 13px;
   transition: 0.2s ease;
+  color: var(--text);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); /* subtle inner depth */
 }
 
 body.dark .form-group input,
 body.dark .form-group textarea {
-  background: #16161b;
+  background: transparent;
   color: var(--text-dark);
   border-color: var(--divider-dark);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Error state */
-.input-error {
-  border-color: var(--error) !important;
-  animation: shake 0.35s;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
-
-/* Send button */
-.send-row {
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Send button – keep original look, just ensure it's above veil */
 .send-btn {
   margin-top: 10px;
   padding: 10px 26px;
@@ -738,6 +734,7 @@ body.dark .form-group textarea {
   font-weight: 700;
   letter-spacing: 2px;
   cursor: pointer;
+  z-index: 2; /* above veil */
 }
 
 body.dark .send-btn {
@@ -745,7 +742,7 @@ body.dark .send-btn {
   color: var(--text-dark);
 }
 
-/* Social buttons column */
+/* Social buttons column – transparent glass */
 .contact-right {
   display: flex;
   flex-direction: column;
@@ -763,28 +760,45 @@ body.dark .send-btn {
   padding: 10px 14px;
   border: 2px solid var(--divider);
   border-radius: 10px;
-  background: #eeeae0;
+  background: transparent; /* ← transparent */
   text-decoration: none;
   color: #000;
   transition: transform 0.2s ease;
   cursor: pointer;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.35); /* keep your original shadow style */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.social-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(238, 234, 224, 0.15); /* very faint veil */
+  border-radius: 8px;
+  z-index: -1;
 }
 
 body.dark .social-btn {
-  background: #16161b;
+  background: transparent;
   border-color: var(--divider-dark);
   color: var(--text-dark);
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+}
+
+body.dark .social-btn::before {
+  background: rgba(22, 22, 27, 0.2);
+}
+
+.social-btn:hover {
+  transform: scale(1.2);
+  animation: blobWobble 1.6s ease-in-out infinite;
 }
 
 .social-btn img {
   width: 22px;
   height: 22px;
-}
-
-/* Grow + wobble on hover */
-.social-btn:hover {
-  transform: scale(1.2);
-  animation: blobWobble 1.6s ease-in-out infinite;
 }
 
 /* Responsive: stack on mobile */
@@ -854,6 +868,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
