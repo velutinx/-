@@ -80,20 +80,58 @@ body::before {
   background: transparent;
 }
 
+/* Dark mode: much darker base gradient + slow flow */
+body.dark .background-gradient {
+  background: linear-gradient(
+    135deg,
+    #00030f 0%,      /* near-black with tiny blue hint */
+    #000814 20%,     /* deepest navy-black */
+    #0a1125 40%,     /* very dark navy */
+    #001220 60%,     /* cold dark space blue-black */
+    #0b142b 80%,     /* muted deep navy */
+    #00030f 100%     /* loop back to near-black */
+  );
+  background-size: 400% 400%;
+  animation: darkNebulaFlow 55s ease infinite;   /* slower & calmer movement */
+}
+
+@keyframes darkNebulaFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Even darker veil for stronger contrast/readability */
+body.dark::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 3, 15, 0.65);   /* strong dark navy overlay */
+  z-index: -9;
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+}
+
+/* Subtle dark-navy stars (matching the watercolor texture mood) */
 body.dark .background-gradient::before {
   content: "";
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(#142850 1px, transparent 1px),   /* deeper navy-blue */
-    radial-gradient(#0f1e4d 1px, transparent 1px),
-    radial-gradient(#1a2e5c 1px, transparent 1px);
-  background-size: 55px 55px, 85px 85px, 110px 110px;
-  background-position: 0 0, 40px 40px, 75px 75px;
-  opacity: 0.07;
-  animation: starTwinkle 32s ease-in-out infinite;
+    radial-gradient(#0f1e38 1px, transparent 1px),   /* very dark navy-blue dots */
+    radial-gradient(#0f1e38 1px, transparent 1px),
+    radial-gradient(#14253f 1px, transparent 1px);
+  background-size: 70px 70px, 90px 90px, 120px 120px;
+  background-position: 0 0, 35px 35px, 80px 80px;
+  opacity: 0.06;                  /* still subtle, but visible on deep black */
+  animation: starTwinkle 35s ease-in-out infinite;
   mix-blend-mode: screen;
   pointer-events: none;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50%      { opacity: 0.11; transform: scale(1.02); }
 }
 
 @keyframes starTwinkle {
@@ -714,6 +752,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
