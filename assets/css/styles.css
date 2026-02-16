@@ -7,7 +7,7 @@
   --divider-dark: #6f6a4e;
   --text-dark: #e6e3d8;
 }
-
+@import url("background.css");
 /* =========================================================
    ===== Global Reset & Body  (CLEANED)
    ========================================================= */
@@ -592,3 +592,4 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
