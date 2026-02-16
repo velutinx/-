@@ -9,7 +9,7 @@
 }
 
 /* ====================================================
-   Shared Animated Background
+   Shared Animated Background (cream palette + wave)
    ==================================================== */
 
 .background-wrapper {
@@ -70,16 +70,26 @@ body::before {
   backdrop-filter: blur(1.5px);
 }
 
-/* Dark mode background */
+#page,
+.hero,
+.commission-wrap,
+.artwork-wrap,
+.contact-wrap {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Dark mode: much darker base gradient + slow flow */
 body.dark .background-gradient {
   background: linear-gradient(
     135deg,
-    #111111 0%,
-    #000814 20%,
-    #0a1125 40%,
-    #001220 60%,
-    #0b142b 80%,
-    #111111 100%
+    #111111 0%,      /* ← changed to your requested starting color */
+    #000814 20%,     /* deepest navy-black */
+    #0a1125 40%,     /* very dark navy */
+    #001220 60%,     /* cold dark space blue-black */
+    #0b142b 80%,     /* muted deep navy */
+    #111111 100%     /* loop back to #111111 for smooth cycling */
   );
   background-size: 400% 400%;
   animation: darkNebulaFlow 55s ease infinite;
@@ -91,22 +101,29 @@ body.dark .background-gradient {
   100% { background-position: 0% 50%; }
 }
 
+/* Even darker veil for stronger contrast/readability */
 body.dark::before {
-  background: rgba(0, 3, 15, 0.65);
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 3, 15, 0.65);   /* strong dark navy overlay */
+  z-index: -9;
+  pointer-events: none;
   backdrop-filter: blur(1px);
 }
 
+/* Subtle dark-navy stars (matching the watercolor texture mood) */
 body.dark .background-gradient::before {
   content: "";
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(#111111 1px, transparent 1px),
+    radial-gradient(#111111 1px, transparent 1px),   /* very dark navy-blue dots */
     radial-gradient(#0f1e38 1px, transparent 1px),
     radial-gradient(#14253f 1px, transparent 1px);
   background-size: 70px 70px, 90px 90px, 120px 120px;
   background-position: 0 0, 35px 35px, 80px 80px;
-  opacity: 0.06;
+  opacity: 0.06;                  /* still subtle, but visible on deep black */
   animation: starTwinkle 35s ease-in-out infinite;
   mix-blend-mode: screen;
   pointer-events: none;
@@ -117,28 +134,44 @@ body.dark .background-gradient::before {
   50%      { opacity: 0.11; transform: scale(1.02); }
 }
 
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.07; transform: scale(1); }
+  50%      { opacity: 0.14; transform: scale(1.03); }
+}
+
+@keyframes pulseNebula1 {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1.0; transform: scale(1.08); }
+}
+
+@keyframes pulseNebula2 {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.12); }
+}
+
+@keyframes nebulaFlow {
+  0%   { background-position: 0% 0%, 100% 100%, 0% 100%, 50% 50%; }
+  100% { background-position: 100% 100%, 0% 0%, 100% 0%, 50% 50%; }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.04; }
+  50%      { opacity: 0.08; }
+}
+
 body.dark .wave-overlay {
   opacity: 0.14;
   mix-blend-mode: soft-light;
 }
 
-/* Main containers above background */
-#page,
-.hero,
-.commission-wrap,
-.artwork-wrap,
-.contact-wrap {
-  position: relative;
-  z-index: 1;
-  background: transparent;
+body.dark::before {
+  background: rgba(15, 15, 18, 0.45);
 }
 
 /* =========================================================
-   Global Reset & Body
+   ===== Global Reset & Body  (CLEANED)
    ========================================================= */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -154,7 +187,7 @@ body.dark {
   color: var(--text-dark);
 }
 
-/* Page load animation */
+/* ✅ Page load animation */
 #page {
   opacity: 0;
   transform: translateY(60px);
@@ -165,7 +198,129 @@ body.dark {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Navigation Blobs – strict size control */
+/* Language Swipe Overlay */
+.lang-swipe {
+  position: fixed;
+  bottom: -120%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: var(--divider);
+  z-index: 10000;
+  pointer-events: none;
+}
+.lang-swipe.active {
+  animation: langSwipeUp 0.55s ease-in forwards;
+}
+
+@keyframes langSwipeUp {
+  to { bottom: 120%; }
+}
+
+/* Language Toggle – make it transparent with subtle border/glow */
+.lang-toggle {
+  position: fixed;
+  top: 20%;
+  right: 24px;
+  width: 72px;
+  height: 48px;
+  background: transparent;                    /* ← changed to transparent */
+  border: 2px solid var(--divider);           /* subtle border using your divider color */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 48px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);    /* soft shadow for depth */
+  backdrop-filter: blur(8px);                 /* glass-like effect – optional but nice */
+  transition: all 0.3s ease;
+}
+
+.lang-toggle:hover {
+  background: rgba(170, 158, 118, 0.15);      /* very faint hover tint using divider color */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  transform: scale(1.08);
+}
+
+/* Dark mode adjustments for lang toggle */
+body.dark .lang-toggle {
+  border-color: var(--divider-dark);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark .lang-toggle:hover {
+  background: rgba(111, 106, 78, 0.2);        /* faint dark hover */
+}
+
+/* Theme Toggle – transparent pill with glass effect */
+.theme-toggle {
+  position: fixed;
+  top: 80%;
+  right: 24px;
+  width: 72px;
+  height: 36px;
+  background: transparent;                    /* ← changed to transparent */
+  border: 2px solid var(--divider);
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(8px);                 /* glass/matte effect */
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(170, 158, 118, 0.12);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  transform: scale(1.08);
+}
+
+.theme-knob {
+  width: 28px;
+  height: 28px;
+  background: #000;                           /* keep dark knob for contrast */
+  border-radius: 50%;
+  transition: transform 0.4s ease, background 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5); /* inner shadow for depth */
+}
+
+.theme-knob::before { content: "🌙"; }
+
+body.dark .theme-toggle {
+  border-color: var(--divider-dark);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark .theme-toggle:hover {
+  background: rgba(111, 106, 78, 0.18);
+}
+
+body.dark .theme-knob {
+  transform: translateX(34px);
+  background: var(--divider-dark);
+}
+body.dark .theme-knob::before { content: "☀️"; }
+
+/* Wobble Animations */
+@keyframes langWobble {
+  0% { transform: scale(1.1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-18deg); }
+  50% { transform: scale(1.1) rotate(18deg); }
+  75% { transform: scale(1.1) rotate(-10deg); }
+  100% { transform: scale(1.1) rotate(0deg); }
+}
+
+/* Navigation Blobs */
 .nav {
   display: flex;
   justify-content: center;
@@ -174,9 +329,7 @@ body.dark {
 }
 
 .blob-btn {
-  width: 180px !important;
-  max-width: 180px !important;
-  height: auto;
+  width: 180px;
   cursor: pointer;
   transform-box: fill-box;
   transform-origin: center;
@@ -186,27 +339,29 @@ body.dark {
   animation: blobWobble 1.6s ease-in-out infinite;
 }
 
+@keyframes blobWobble {
+  0% { transform: scale(1.15) rotate(0deg); }
+  25% { transform: scale(1.15) rotate(-4deg); }
+  50% { transform: scale(1.15) rotate(4deg); }
+  75% { transform: scale(1.15) rotate(-3deg); }
+  100% { transform: scale(1.15) rotate(0deg); }
+}
+
 .blob-svg path {
   fill: none;
   stroke: var(--divider);
   stroke-width: 6;
 }
-
-body.dark .blob-svg path {
-  stroke: var(--divider-dark);
-}
+body.dark .blob-svg path { stroke: var(--divider-dark); }
 
 .blob-text {
   font-weight: 900;
   letter-spacing: 2px;
-  font-size: 19px !important;
+  font-size: 19px;
   fill: var(--text);
   pointer-events: none;
 }
-
-body.dark .blob-text {
-  fill: var(--text-dark);
-}
+body.dark .blob-text { fill: var(--text-dark); }
 
 /* Dividers */
 .divider {
@@ -216,10 +371,7 @@ body.dark .blob-text {
   margin: 22px auto;
   border-radius: 4px;
 }
-
-body.dark .divider {
-  background: var(--divider-dark);
-}
+body.dark .divider { background: var(--divider-dark); }
 
 /* Hero Section */
 .hero {
@@ -238,7 +390,6 @@ body.dark .divider {
   justify-content: center;
   overflow: hidden;
 }
-
 .hero-image img {
   width: 320px;
   border-radius: 16px;
@@ -253,35 +404,21 @@ body.dark .divider {
   animation: socialStarFall 6s linear forwards;
   z-index: 2;
 }
-
 @keyframes socialStarFall {
   from { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; }
   to { opacity: 0; transform: translateY(300px); }
 }
 
-.hero-text {
-  text-align: center;
-}
-
-.hero-name {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: 4px;
-}
-
-.hero-sub {
-  font-size: 14px;
-  letter-spacing: 1px;
-  margin: 10px 0;
-}
+.hero-text { text-align: center; }
+.hero-name { font-size: 42px; font-weight: 800; letter-spacing: 4px; }
+.hero-sub { font-size: 14px; letter-spacing: 1px; margin: 10px 0; }
 
 /* Discord Button */
 .discord-link img {
   width: 220px;
   cursor: pointer;
 }
-
 .discord-link img:hover {
   animation: blobWobble 1.6s ease-in-out infinite;
 }
@@ -295,15 +432,13 @@ body.dark .divider {
   animation: driftFall 2s ease-out forwards;
   z-index: 9999;
 }
-
 @keyframes driftFall {
   to {
     opacity: 0;
     transform: translate(calc(-20px + 40px * var(--drift)), 90px) scale(0.4);
   }
 }
-
-/* Commission Section – transparent/frosted */
+/* Commission Section */
 .commission-wrap {
   max-width: 1000px;
   margin: 0 auto;
@@ -312,39 +447,42 @@ body.dark .divider {
 }
 
 .commission-box {
-  background: transparent;
+  background: transparent;                    /* no solid color – shows background through */
   border: 2px solid var(--divider);
   border-radius: 16px;
   padding: 40px 36px;
   min-height: 360px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);    /* deeper shadow for depth */
+  backdrop-filter: blur(12px);                /* frosted glass effect */
+  -webkit-backdrop-filter: blur(12px);        /* Safari support */
   position: relative;
   overflow: hidden;
   transition: all 0.4s ease;
   text-align: center;
 }
 
+/* Light mode subtle tint */
 .commission-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(238, 234, 224, 0.18);
+  background: rgba(238, 234, 224, 0.18);      /* very faint cream/ivory veil */
   border-radius: 14px;
   z-index: -1;
   pointer-events: none;
 }
 
+/* Dark mode adjustments */
 body.dark .commission-box {
   border-color: var(--divider-dark);
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 body.dark .commission-box::before {
-  background: rgba(22, 22, 27, 0.25);
+  background: rgba(22, 22, 27, 0.25);         /* faint dark veil */
 }
 
+/* Hover effect for interactivity */
 .commission-box:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 48px rgba(0,0,0,0.35);
@@ -464,114 +602,20 @@ body.dark .commission-box::before {
   to { opacity: 0; transform: translateY(calc(100vh + 100px)) translateX(calc(-120px + 240px * var(--drift))); }
 }
 
-/* Language & Theme Toggles – transparent glass style */
+/* Make language toggle rectangular + bigger flags */
 .lang-toggle {
-  position: fixed;
-  top: 20%;
-  right: 24px;
-  width: 72px;
-  height: 48px;
-  background: transparent;
-  border: 2px solid var(--divider);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 32px;
-  line-height: 48px;
-  cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
+  width: 72px !important;          /* wider than tall → rectangle */
+  height: 48px !important;         /* adjust height as needed */
+  font-size: 32px !important;      /* ~3x normal emoji size */
+  line-height: 48px !important;    /* center vertically */
+  padding: 0 !important;
+  border-radius: 8px !important;   /* slightly softer corners */
 }
 
+/* Optional: make it even more flag-like */
 .lang-toggle:hover {
-  background: rgba(170, 158, 118, 0.15);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  transform: scale(1.08);
-}
-
-body.dark .lang-toggle {
-  border-color: var(--divider-dark);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-body.dark .lang-toggle:hover {
-  background: rgba(111, 106, 78, 0.2);
-}
-
-.theme-toggle {
-  position: fixed;
-  top: 80%;
-  right: 24px;
-  width: 72px;
-  height: 36px;
-  background: transparent;
-  border: 2px solid var(--divider);
-  border-radius: 999px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 4px;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background: rgba(170, 158, 118, 0.12);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  transform: scale(1.08);
-}
-
-.theme-knob {
-  width: 28px;
-  height: 28px;
-  background: #000;
-  border-radius: 50%;
-  transition: transform 0.4s ease, background 0.4s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
-}
-
-.theme-knob::before { content: "🌙"; }
-
-body.dark .theme-toggle {
-  border-color: var(--divider-dark);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-body.dark .theme-toggle:hover {
-  background: rgba(111, 106, 78, 0.18);
-}
-
-body.dark .theme-knob {
-  transform: translateX(34px);
-  background: var(--divider-dark);
-}
-
-body.dark .theme-knob::before { content: "☀️"; }
-
-/* Wobble Animations */
-@keyframes blobWobble {
-  0% { transform: scale(1.15) rotate(0deg); }
-  25% { transform: scale(1.15) rotate(-4deg); }
-  50% { transform: scale(1.15) rotate(4deg); }
-  75% { transform: scale(1.15) rotate(-3deg); }
-  100% { transform: scale(1.15) rotate(0deg); }
-}
-
-@keyframes langWobble {
-  0% { transform: scale(1.1) rotate(0deg); }
-  25% { transform: scale(1.1) rotate(-18deg); }
-  50% { transform: scale(1.1) rotate(18deg); }
-  75% { transform: scale(1.1) rotate(-10deg); }
-  100% { transform: scale(1.1) rotate(0deg); }
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
 }
 
 /* Contact Page Layout */
@@ -696,12 +740,13 @@ body.dark .social-btn {
   height: 22px;
 }
 
+/* Grow + wobble on hover */
 .social-btn:hover {
   transform: scale(1.2);
   animation: blobWobble 1.6s ease-in-out infinite;
 }
 
-/* Responsive */
+/* Responsive: stack on mobile */
 @media (max-width: 900px) {
   .contact-wrap {
     grid-template-columns: 1fr;
@@ -735,7 +780,20 @@ body.dark .popup {
   color: var(--text-dark);
 }
 
-/* Leaderboard (if used) */
+/* Error state */
+.input-error {
+  border-color: var(--error) !important;
+  animation: shake 0.35s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
 .leaderboard-entry {
   transition: filter 0.5s ease, transform 0.4s ease;
   padding: 3px 0;
@@ -751,22 +809,19 @@ body.dark .popup {
 .leaderboard-entry.spoiled:hover {
   filter: blur(0) brightness(1.08);
   transform: scale(1.015);
-  transition: filter 0.9s ease-out, transform 0.5s ease;
+  transition: 
+    filter 0.9s ease-out,
+    transform 0.5s ease;
 }
 
-/* Safety overrides – prevent stuck oversized blobs */
-.blob-btn {
-  transform: scale(1) !important;
-  transition: transform 0.3s ease !important;
-}
 
-.blob-text {
-  font-size: 19px !important;
-  transition: font-size 0.3s ease !important;
-}
 
-/* Reset on page load in case something applies scale early */
-body:not(.dark) .blob-btn,
-body.dark .blob-btn {
-  transform: none !important;
-}
+
+
+
+
+
+
+
+
+
