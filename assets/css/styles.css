@@ -118,7 +118,7 @@ body.dark .background-gradient::before {
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(#0f1e38 1px, transparent 1px),   /* very dark navy-blue dots */
+    radial-gradient(#111111 1px, transparent 1px),   /* very dark navy-blue dots */
     radial-gradient(#0f1e38 1px, transparent 1px),
     radial-gradient(#14253f 1px, transparent 1px);
   background-size: 70px 70px, 90px 90px, 120px 120px;
@@ -752,6 +752,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
