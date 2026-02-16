@@ -659,7 +659,7 @@ body.dark .commission-box::before {
   transition: transform 0.2s ease;
 }
 
-/* Contact Page Layout */
+/* Contact Page Layout – transparent form and social buttons */
 .contact-wrap {
   max-width: 1200px;
   margin: 0 auto;
@@ -667,21 +667,62 @@ body.dark .commission-box::before {
   display: grid;
   grid-template-columns: 70% 30%;
   gap: 40px;
+  background: transparent;   /* ensure wrapper is transparent */
+}
+
+.contact-left {
+  background: transparent;
+  border: 2px solid var(--divider);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.contact-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(238, 234, 224, 0.18); /* light mode faint veil */
+  border-radius: 14px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body.dark .contact-left {
+  border-color: var(--divider-dark);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+body.dark .contact-left::before {
+  background: rgba(22, 22, 27, 0.25); /* dark mode faint veil */
+}
+
+.contact-left:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+  backdrop-filter: blur(16px);
 }
 
 .contact-left h2 {
   font-size: 18px;
   letter-spacing: 1px;
   margin-bottom: 10px;
+  z-index: 2;
 }
 
 .contact-left p {
   font-size: 14px;
   margin-bottom: 20px;
+  z-index: 2;
 }
 
 .form-group {
   margin-bottom: 16px;
+  z-index: 2;
 }
 
 .form-group label {
@@ -697,38 +738,24 @@ body.dark .commission-box::before {
   padding: 10px 12px;
   border: 2px solid var(--divider);
   border-radius: 6px;
-  background: #eeeae0;
+  background: transparent; /* transparent inputs */
   font-size: 13px;
   transition: 0.2s ease;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px); /* subtle blur on inputs */
+  -webkit-backdrop-filter: blur(4px);
+  color: var(--text);
 }
 
 body.dark .form-group input,
 body.dark .form-group textarea {
-  background: #16161b;
+  background: transparent;
   color: var(--text-dark);
   border-color: var(--divider-dark);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* Error state */
-.input-error {
-  border-color: var(--error) !important;
-  animation: shake 0.35s;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
-
-/* Send button */
-.send-row {
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Send button – keep as is or add transparency if wanted */
 .send-btn {
   margin-top: 10px;
   padding: 10px 26px;
@@ -738,6 +765,8 @@ body.dark .form-group textarea {
   font-weight: 700;
   letter-spacing: 2px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
 body.dark .send-btn {
@@ -745,17 +774,14 @@ body.dark .send-btn {
   color: var(--text-dark);
 }
 
-/* Social buttons column */
-.contact-right {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  position: relative;
+.send-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Social buttons – transparent + glass effect */
 .social-btn {
-  width: 62.5%;
+  width: 100%; /* full width for better look in column */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -763,28 +789,46 @@ body.dark .send-btn {
   padding: 10px 14px;
   border: 2px solid var(--divider);
   border-radius: 10px;
-  background: #eeeae0;
+  background: transparent;
   text-decoration: none;
-  color: #000;
-  transition: transform 0.2s ease;
+  color: var(--text);
+  transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.social-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(238, 234, 224, 0.15); /* light mode faint veil */
+  border-radius: 8px;
+  z-index: -1;
 }
 
 body.dark .social-btn {
-  background: #16161b;
+  background: transparent;
   border-color: var(--divider-dark);
   color: var(--text-dark);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.dark .social-btn::before {
+  background: rgba(22, 22, 27, 0.2); /* dark mode faint veil */
+}
+
+.social-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
 }
 
 .social-btn img {
   width: 22px;
   height: 22px;
-}
-
-/* Grow + wobble on hover */
-.social-btn:hover {
-  transform: scale(1.2);
-  animation: blobWobble 1.6s ease-in-out infinite;
 }
 
 /* Responsive: stack on mobile */
@@ -854,6 +898,7 @@ body.dark .popup {
     filter 0.9s ease-out,
     transform 0.5s ease;
 }
+
 
 
 
