@@ -753,3 +753,20 @@ body.dark .popup {
   transform: scale(1.015);
   transition: filter 0.9s ease-out, transform 0.5s ease;
 }
+
+/* Safety overrides – prevent stuck oversized blobs */
+.blob-btn {
+  transform: scale(1) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.blob-text {
+  font-size: 19px !important;
+  transition: font-size 0.3s ease !important;
+}
+
+/* Reset on page load in case something applies scale early */
+body:not(.dark) .blob-btn,
+body.dark .blob-btn {
+  transform: none !important;
+}
