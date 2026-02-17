@@ -3,11 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>VELUTINX — Poll</title>
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>VELUTINX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/assets/css/styles.css">
   <style>
@@ -79,7 +74,7 @@
 
     .card {
       background: rgba(245,241,223,0.97);
-      border: 3px solid #ffffff; /* white border in light mode */
+      border: 3px solid #ffffff;
       border-radius: 12px;
       padding: 8px;
       cursor: pointer;
@@ -89,7 +84,7 @@
 
     body.dark .card {
       background: rgba(30, 30, 35, 0.97);
-      border: 3px solid #444; /* dark border in dark mode */
+      border: 3px solid #444;
     }
 
     .card:hover {
@@ -140,6 +135,38 @@
       font-weight: bold;
     }
 
+    /* ── WINNER CROSS OVERLAY ─────────────────────────────────────── */
+    .card.winner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('/images/cross.png') center / 65% no-repeat;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 5;
+      mix-blend-mode: multiply;
+      transition: opacity 0.4s ease;
+    }
+
+    body.dark .card.winner::after {
+      mix-blend-mode: screen;
+      opacity: 0.85;
+    }
+
+    .card.winner {
+      box-shadow: 0 0 0 3px #e63946 inset; /* subtle red hint */
+    }
+
+    /* Optional gentle pulse */
+    .card.winner::after {
+      animation: pulseCross 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseCross {
+      0%, 100% { opacity: 0.75; }
+      50%      { opacity: 0.88; }
+    }
+
     /* Bottom */
     .bottom {
       display: flex;
@@ -151,7 +178,7 @@
 
     #leaderboard {
       background: rgba(255,255,255,0.9);
-      border: 3px solid #ffffff; /* white border in light mode */
+      border: 3px solid #ffffff;
       padding: 12px 16px;
       border-radius: 10px;
       min-width: 260px;
@@ -161,7 +188,7 @@
 
     body.dark #leaderboard {
       background: rgba(30, 30, 35, 0.9);
-      border: 3px solid #444; /* dark border in dark mode */
+      border: 3px solid #444;
       color: var(--text-dark);
     }
 
@@ -479,54 +506,62 @@
       }
     }
 
-    // Leaderboard + card labels – from poll_result
-async function fetchLeaderboard() {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/poll_result?order=option_id.asc&select=option_id,character_name,score,selected_at`,
-      {
-        headers: { 
-          apikey: SUPABASE_KEY, 
-          Authorization: `Bearer ${SUPABASE_KEY}` 
-        }
+    // Leaderboard + card labels + WINNER marking
+    async function fetchLeaderboard() {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/poll_result?order=option_id.asc&select=option_id,character_name,score,selected_at`,
+          {
+            headers: { 
+              apikey: SUPABASE_KEY, 
+              Authorization: `Bearer ${SUPABASE_KEY}` 
+            }
+          }
+        );
+
+        if (!res.ok) throw new Error(await res.text());
+
+        const rows = await res.json();
+
+        let html = "";
+        rows.forEach(r => {
+          const isSpoiled = r.selected_at !== null && r.selected_at !== undefined;
+          const cls = isSpoiled ? "spoiled" : "";
+          
+          const name = r.character_name || `Option ${r.option_id}`;
+          const score = Number(r.score || 0).toFixed(1);
+
+          html += `
+            <div class="leaderboard-entry ${cls}">
+              ${name}: ${score}
+            </div>
+          `;
+        });
+
+        resultsBox.innerHTML = html || "No votes yet";
+
+        // Update card labels + mark winner(s) with cross
+        document.querySelectorAll(".card").forEach(card => {
+          card.classList.remove("winner");
+
+          const id = Number(card.dataset.id);
+          const row = rows.find(r => Number(r.option_id) === id);
+          
+          if (row?.character_name) {
+            card.querySelector(".label").textContent = row.character_name;
+          }
+
+          // If selected_at is set → this is the current picked/winner → show cross
+          if (row && row.selected_at !== null && row.selected_at !== undefined) {
+            card.classList.add("winner");
+          }
+        });
+
+      } catch (err) {
+        console.error("fetchLeaderboard error:", err);
+        resultsBox.innerHTML = "Error loading leaderboard";
       }
-    );
-
-    if (!res.ok) throw new Error(await res.text());
-
-    const rows = await res.json();
-
-    let html = "";
-    rows.forEach(r => {
-      const isSpoiled = r.selected_at !== null && r.selected_at !== undefined;
-      const cls = isSpoiled ? "spoiled" : "";
-      
-      const name = r.character_name || `Option ${r.option_id}`;
-      const score = Number(r.score || 0).toFixed(1);
-
-      html += `
-        <div class="leaderboard-entry ${cls}">
-          ${name}: ${score}
-        </div>
-      `;
-    });
-
-    resultsBox.innerHTML = html || "No votes yet";
-
-    // Update card labels (unchanged)
-    document.querySelectorAll(".card").forEach(card => {
-      const id = Number(card.dataset.id);
-      const row = rows.find(r => Number(r.option_id) === id);
-      if (row?.character_name) {
-        card.querySelector(".label").textContent = row.character_name;
-      }
-    });
-
-  } catch (err) {
-    console.error("fetchLeaderboard error:", err);
-    resultsBox.innerHTML = "Error loading leaderboard";
-  }
-}
+    }
 
     // Initial load
     fetchResults();
